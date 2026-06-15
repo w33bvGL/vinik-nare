@@ -12,11 +12,11 @@
     "rsvpDeadline": "1 Հոկտեմբերի 2026"
   },
   "venues": {
-    "main": "Ռեստորան «Անուն»",
-    "registry": "ՔԱՂԱՔԱՑԻԱԿԱՆ ԿԱՑՈՒԹՅԱՆ ԱԿՏԵՐԻ ՊԵՏԱԿԱՆ ԳՐԱՆՑՄԱՆ ԲԱԺԻՆ",
-    "name": "Ռեստորան «Անուն»",
-    "address": "ք. Երևան, փ. Անուն 1",
-    "openMap": "Բացել քարտեզը"
+    "church": "Արtաշaтի Սբ. Hovhannes Aveтaranich Ekeleci",
+    "hall": "Vahagn Hall, Araрат, Аygavan",
+    "name": "Vahagn Hall",
+    "address": "Araрат, Аygavan",
+    "openMap": "Բацел карточки"
   },
   "hero": {
     "scrollHint": "Ոլորել ներքև"
@@ -55,10 +55,16 @@
   },
   "program": {
     "label": "Օրվա ծրագիրը",
+    "mapLink": "Բացել քարտեզը",
     "items": {
-      "gathering": "Հյուրերի հավաք",
-      "ceremony": "Հանդիսավոր արարողություն",
-      "banquet": "Հարսանեկան ճաշ"
+      "ceremony": {
+        "title": "Հարսանեկան արարողություն",
+        "desc": "Հանդիսավոր կրոնական արարողություն"
+      },
+      "banquet": {
+        "title": "Հարսանեկան ճաշ",
+        "desc": "Տոնական ընթրիք մտերիմների հետ"
+      }
     }
   },
   "location": {
