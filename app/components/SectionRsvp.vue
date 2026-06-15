@@ -19,6 +19,16 @@ const canSubmit    = computed(() =>
   name.value.trim().length >= 2,
 )
 
+const attendanceOptions = computed(() => [
+  { value: 'yes', label: t('rsvp.yes') },
+  { value: 'no',  label: t('rsvp.no') },
+])
+
+const sideOptions = computed(() => [
+  { value: 'bride', label: t('rsvp.sideBride') },
+  { value: 'groom', label: t('rsvp.sideGroom') },
+])
+
 async function submit() {
   if (!canSubmit.value) return
   state.value = 'submitting'
@@ -89,59 +99,29 @@ onMounted(() => {
               </p>
             </div>
 
-            <!-- Attendance pills -->
-            <div data-gsap class="rsvp__group">
-              <p class="rsvp__field-label">{{ t('rsvp.attendLabel') }}</p>
-              <div class="rsvp__pills" role="group" :aria-label="t('rsvp.attendLabel')">
-                <button
-                  type="button"
-                  class="rsvp__pill"
-                  :class="{ 'rsvp__pill--on': attendance === 'yes' }"
-                  @click="attendance = 'yes'"
-                >
-                  <span class="rsvp__pill-check" aria-hidden="true" />
-                  {{ t('rsvp.yes') }}
-                </button>
-                <button
-                  type="button"
-                  class="rsvp__pill"
-                  :class="{ 'rsvp__pill--on': attendance === 'no' }"
-                  @click="attendance = 'no'"
-                >
-                  <span class="rsvp__pill-check" aria-hidden="true" />
-                  {{ t('rsvp.no') }}
-                </button>
-              </div>
-            </div>
+            <RsvpRadioGroup
+              v-model="attendance"
+              name="attendance"
+              :legend="t('rsvp.attendLabel')"
+              :options="attendanceOptions"
+              :disabled="isSubmitting"
+              data-gsap
+            />
 
-            <!-- Side pills -->
-            <div data-gsap class="rsvp__group">
-              <p class="rsvp__field-label">{{ t('rsvp.sideLabel') }}</p>
-              <div class="rsvp__pills" role="group" :aria-label="t('rsvp.sideLabel')">
-                <button
-                  type="button"
-                  class="rsvp__pill"
-                  :class="{ 'rsvp__pill--on': side === 'bride' }"
-                  @click="side = 'bride'"
-                >
-                  <span class="rsvp__pill-check" aria-hidden="true" />
-                  {{ t('rsvp.sideBride') }}
-                </button>
-                <button
-                  type="button"
-                  class="rsvp__pill"
-                  :class="{ 'rsvp__pill--on': side === 'groom' }"
-                  @click="side = 'groom'"
-                >
-                  <span class="rsvp__pill-check" aria-hidden="true" />
-                  {{ t('rsvp.sideGroom') }}
-                </button>
-              </div>
-            </div>
+            <RsvpRadioGroup
+              v-model="side"
+              name="side"
+              :legend="t('rsvp.sideLabel')"
+              :options="sideOptions"
+              :disabled="isSubmitting"
+              data-gsap
+            />
 
-            <!-- Name -->
-            <div data-gsap class="rsvp__field">
-              <label class="rsvp__field-label" for="rsvp-name">{{ t('rsvp.nameLabel') }}</label>
+            <RsvpFormField
+              :label="t('rsvp.nameLabel')"
+              input-id="rsvp-name"
+              data-gsap
+            >
               <input
                 id="rsvp-name"
                 v-model="name"
@@ -153,12 +133,14 @@ onMounted(() => {
                 minlength="2"
                 :disabled="isSubmitting"
               />
-            </div>
+            </RsvpFormField>
 
-            <!-- Guest count (when attending) -->
             <Transition name="slide">
-              <div v-if="attendance === 'yes'" class="rsvp__field">
-                <label class="rsvp__field-label" for="rsvp-guests">{{ t('rsvp.guestsLabel') }}</label>
+              <RsvpFormField
+                v-if="attendance === 'yes'"
+                :label="t('rsvp.guestsLabel')"
+                input-id="rsvp-guests"
+              >
                 <input
                   id="rsvp-guests"
                   v-model.number="guests"
@@ -169,12 +151,14 @@ onMounted(() => {
                   max="5"
                   :disabled="isSubmitting"
                 />
-              </div>
+              </RsvpFormField>
             </Transition>
 
-            <!-- Wish -->
-            <div data-gsap class="rsvp__field">
-              <label class="rsvp__field-label" for="rsvp-wish">{{ t('rsvp.wishLabel') }}</label>
+            <RsvpFormField
+              :label="t('rsvp.wishLabel')"
+              input-id="rsvp-wish"
+              data-gsap
+            >
               <textarea
                 id="rsvp-wish"
                 v-model="wish"
@@ -184,7 +168,7 @@ onMounted(() => {
                 maxlength="400"
                 :disabled="isSubmitting"
               />
-            </div>
+            </RsvpFormField>
 
             <p v-if="state === 'error'" class="rsvp__error" role="alert">
               {{ errorMsg }}
@@ -258,74 +242,7 @@ onMounted(() => {
   gap: var(--space-4);
 }
 
-/* Group: label + pills together */
-.rsvp__group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Pills */
-.rsvp__pills {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.rsvp__pill {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  padding: 14px 20px;
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
-  color: var(--color-accent);
-  background: transparent;
-  border: 0.5px solid var(--color-divider);
-  cursor: pointer;
-  transition:
-    background var(--dur-default) var(--ease-gentle),
-    color var(--dur-default) var(--ease-gentle),
-    border-color var(--dur-default) var(--ease-gentle);
-}
-.rsvp__pill:hover { background: var(--color-hover-fill); }
-.rsvp__pill--on {
-  background: var(--squirrel-900);
-  color: var(--squirrel-50);
-  border-color: var(--squirrel-900);
-}
-.rsvp__pill:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
-}
-
-.rsvp__pill-check {
-  display: block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0;
-  transition: opacity var(--dur-default) var(--ease-gentle);
-}
-.rsvp__pill--on .rsvp__pill-check { opacity: 1; }
-
-/* Field labels + inputs */
-.rsvp__field { display: flex; flex-direction: column; gap: 6px; }
-
-.rsvp__field-label {
-  font-family: var(--font-sc);
-  font-size: var(--text-xs);
-  font-weight: 300;
-  letter-spacing: var(--tracking-widest);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-}
-
+/* Native inputs (used via slot in RsvpFormField) */
 .rsvp__input {
   width: 100%;
   padding: 10px 0;

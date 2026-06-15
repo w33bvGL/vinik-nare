@@ -47,7 +47,7 @@ defineEmits<{ 'update:modelValue': [value: string] }>()
 }
 
 .rg__legend {
-  font-family: var(--font-sc);
+  font-family: var(--font-sc), sans-serif;
   font-size: var(--text-xs);
   font-weight: 300;
   letter-spacing: var(--tracking-widest);
@@ -64,10 +64,13 @@ defineEmits<{ 'update:modelValue': [value: string] }>()
 
 .rg__input {
   position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .rg__pill {
@@ -97,8 +100,7 @@ defineEmits<{ 'update:modelValue': [value: string] }>()
   color: var(--squirrel-50);
   border-color: var(--squirrel-900);
 }
-.rg__input:focus-visible ~ * { outline: 2px solid var(--color-focus); outline-offset: 3px; }
-.rg__input:focus-visible + .rg__dot {
+.rg__pill:has(.rg__input:focus-visible) {
   outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
