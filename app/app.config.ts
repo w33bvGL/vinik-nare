@@ -5,15 +5,16 @@ export default defineAppConfig({
     dateMonth: '10',
     dateYear: '26',
 
-    venue: {
-      mapsUrl: 'https://maps.google.com',
+    venues: {
+      hall:   { mapsUrl: 'https://maps.app.goo.gl/AUJFmXNE2w8U89dL9' },
+      church: { mapsUrl: 'https://maps.app.goo.gl/Q4TfkThGwWikThZU9' },
     },
 
     rsvpEndpoint: '',
 
     program: [
       { key: 'ceremony', time: '15:00', venueKey: 'church', photo: '/images/program/1.webp', mapsUrl: 'https://maps.app.goo.gl/Q4TfkThGwWikThZU9' },
-      { key: 'banquet',  time: '18:00', venueKey: 'hall',   photo: '/images/program/2.webp',   mapsUrl: 'https://maps.app.goo.gl/AUJFmXNE2w8U89dL9' },
+      { key: 'banquet',  time: '18:00', venueKey: 'hall',   photo: '/images/program/2.webp', mapsUrl: 'https://maps.app.goo.gl/AUJFmXNE2w8U89dL9' },
     ],
 
     stages: [

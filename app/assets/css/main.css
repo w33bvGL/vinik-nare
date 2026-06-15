@@ -50,7 +50,11 @@ body {
 }
 
 /* Section base */
-.section { padding-block: var(--space-12); }
+.section { padding-block: var(--space-8); }
+
+@media (min-width: 768px) {
+  .section { padding-block: var(--space-12); }
+}
 
 /* Photo filter — desaturate to Squirrel temperature */
 .photo {

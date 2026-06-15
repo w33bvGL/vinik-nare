@@ -5,6 +5,8 @@ const config = useAppConfig()
 const rootRef = ref<HTMLElement | null>(null)
 const { revealGroup } = useGsapReveal()
 
+const hallMapsUrl = config.wedding.venues.hall.mapsUrl
+
 onMounted(() => revealGroup(rootRef, '[data-gsap]', { stagger: 0.1 }))
 </script>
 
@@ -27,7 +29,7 @@ onMounted(() => revealGroup(rootRef, '[data-gsap]', { stagger: 0.1 }))
       <UiButton
         data-gsap
         as="a"
-        :href="config.wedding.venue.mapsUrl"
+        :href="hallMapsUrl"
         :external="true"
         variant="outline"
         class="location__cta"
