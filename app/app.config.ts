@@ -13,7 +13,7 @@ export default defineAppConfig({
 
     program: [
       { key: 'ceremony', time: '15:00', venueKey: 'church', photo: '/images/program/1.webp', mapsUrl: 'https://maps.app.goo.gl/Q4TfkThGwWikThZU9' },
-      { key: 'banquet',  time: '18:00', venueKey: 'hall',   photo: '/images/program/2.webp',   mapsUrl: '' },
+      { key: 'banquet',  time: '18:00', venueKey: 'hall',   photo: '/images/program/2.webp',   mapsUrl: 'https://maps.app.goo.gl/AUJFmXNE2w8U89dL9' },
     ],
 
     stages: [
