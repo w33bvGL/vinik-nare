@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const config = useAppConfig()
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
 const state      = ref<FormState>('idle')
 const attendance = ref<'yes' | 'no' | null>(null)
+const side       = ref<'bride' | 'groom' | null>(null)
 const name       = ref('')
 const guests     = ref(1)
 const wish       = ref('')
@@ -13,7 +13,11 @@ const errorMsg   = ref('')
 
 const isSubmitting = computed(() => state.value === 'submitting')
 const isSuccess    = computed(() => state.value === 'success')
-const canSubmit    = computed(() => attendance.value !== null && name.value.trim().length >= 2)
+const canSubmit    = computed(() =>
+  attendance.value !== null &&
+  side.value !== null &&
+  name.value.trim().length >= 2,
+)
 
 async function submit() {
   if (!canSubmit.value) return
@@ -21,17 +25,18 @@ async function submit() {
   errorMsg.value = ''
 
   try {
-    if (config.wedding.rsvpEndpoint) {
-      const res = await fetch(config.wedding.rsvpEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ attendance: attendance.value, name: name.value.trim(), guests: guests.value, wish: wish.value.trim() }),
-      })
-      if (!res.ok) throw new Error()
-    } else {
-      await new Promise((r) => setTimeout(r, 1200))
-    }
-
+    const res = await fetch('/api/rsvp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        attendance: attendance.value,
+        name: name.value.trim(),
+        guests: guests.value,
+        wish: wish.value.trim(),
+        side: side.value,
+      }),
+    })
+    if (!res.ok) throw new Error()
     state.value = 'success'
   } catch {
     state.value = 'error'
@@ -64,12 +69,14 @@ onMounted(() => {
       <div class="rsvp__body">
         <Transition name="fade" mode="out-in">
 
+          <!-- Success -->
           <div v-if="isSuccess" class="rsvp__success" aria-live="polite">
             <WaxSeal :size="64" class="rsvp__seal" />
             <p class="rsvp__success-heading">{{ t('rsvp.successHeading') }}</p>
             <p class="rsvp__success-text">{{ t('rsvp.successText') }}</p>
           </div>
 
+          <!-- Form -->
           <form v-else class="rsvp__form" novalidate @submit.prevent="submit">
 
             <div class="rsvp__header" data-gsap>
@@ -83,25 +90,53 @@ onMounted(() => {
             </div>
 
             <!-- Attendance pills -->
-            <div data-gsap class="rsvp__attend" role="group" :aria-label="t('rsvp.label')">
-              <button
-                type="button"
-                class="rsvp__pill"
-                :class="{ 'rsvp__pill--on': attendance === 'yes' }"
-                @click="attendance = 'yes'"
-              >
-                <span class="rsvp__pill-check" aria-hidden="true" />
-                {{ t('rsvp.yes') }}
-              </button>
-              <button
-                type="button"
-                class="rsvp__pill"
-                :class="{ 'rsvp__pill--on': attendance === 'no' }"
-                @click="attendance = 'no'"
-              >
-                <span class="rsvp__pill-check" aria-hidden="true" />
-                {{ t('rsvp.no') }}
-              </button>
+            <div data-gsap class="rsvp__group">
+              <p class="rsvp__field-label">{{ t('rsvp.attendLabel') }}</p>
+              <div class="rsvp__pills" role="group" :aria-label="t('rsvp.attendLabel')">
+                <button
+                  type="button"
+                  class="rsvp__pill"
+                  :class="{ 'rsvp__pill--on': attendance === 'yes' }"
+                  @click="attendance = 'yes'"
+                >
+                  <span class="rsvp__pill-check" aria-hidden="true" />
+                  {{ t('rsvp.yes') }}
+                </button>
+                <button
+                  type="button"
+                  class="rsvp__pill"
+                  :class="{ 'rsvp__pill--on': attendance === 'no' }"
+                  @click="attendance = 'no'"
+                >
+                  <span class="rsvp__pill-check" aria-hidden="true" />
+                  {{ t('rsvp.no') }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Side pills -->
+            <div data-gsap class="rsvp__group">
+              <p class="rsvp__field-label">{{ t('rsvp.sideLabel') }}</p>
+              <div class="rsvp__pills" role="group" :aria-label="t('rsvp.sideLabel')">
+                <button
+                  type="button"
+                  class="rsvp__pill"
+                  :class="{ 'rsvp__pill--on': side === 'bride' }"
+                  @click="side = 'bride'"
+                >
+                  <span class="rsvp__pill-check" aria-hidden="true" />
+                  {{ t('rsvp.sideBride') }}
+                </button>
+                <button
+                  type="button"
+                  class="rsvp__pill"
+                  :class="{ 'rsvp__pill--on': side === 'groom' }"
+                  @click="side = 'groom'"
+                >
+                  <span class="rsvp__pill-check" aria-hidden="true" />
+                  {{ t('rsvp.sideGroom') }}
+                </button>
+              </div>
             </div>
 
             <!-- Name -->
@@ -181,7 +216,7 @@ onMounted(() => {
 .rsvp__body {
   margin-inline: auto;
   margin-block: var(--space-8);
-  border: 1px solid var(--color-divider);
+  border: 0.5px solid var(--color-divider);
   padding: var(--space-6) var(--space-4);
 }
 
@@ -189,10 +224,11 @@ onMounted(() => {
   .rsvp__body { padding: var(--space-6); }
 }
 
+/* Header block */
 .rsvp__header { text-align: center; margin-bottom: var(--space-6); }
 
 .rsvp__label {
-  font-family: var(--font-sc),sans-serif;
+  font-family: var(--font-sc);
   font-size: var(--text-xl);
   font-weight: 300;
   letter-spacing: var(--tracking-widest);
@@ -209,7 +245,7 @@ onMounted(() => {
 }
 
 .rsvp__meta {
-  font-family: var(--font-sans), sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 300;
   color: var(--color-text-secondary);
@@ -222,7 +258,15 @@ onMounted(() => {
   gap: var(--space-4);
 }
 
-.rsvp__attend {
+/* Group: label + pills together */
+.rsvp__group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Pills */
+.rsvp__pills {
   display: flex;
   gap: var(--space-2);
 }
@@ -234,7 +278,7 @@ onMounted(() => {
   justify-content: center;
   gap: var(--space-1);
   padding: 14px 20px;
-  font-family: var(--font-sans), sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: var(--tracking-wider);
@@ -261,8 +305,8 @@ onMounted(() => {
 
 .rsvp__pill-check {
   display: block;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: currentColor;
   opacity: 0;
@@ -270,10 +314,11 @@ onMounted(() => {
 }
 .rsvp__pill--on .rsvp__pill-check { opacity: 1; }
 
+/* Field labels + inputs */
 .rsvp__field { display: flex; flex-direction: column; gap: 6px; }
 
 .rsvp__field-label {
-  font-family: var(--font-sc), sans-serif;
+  font-family: var(--font-sc);
   font-size: var(--text-xs);
   font-weight: 300;
   letter-spacing: var(--tracking-widest);
@@ -284,7 +329,7 @@ onMounted(() => {
 .rsvp__input {
   width: 100%;
   padding: 10px 0;
-  font-family: var(--font-sans), sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--text-base);
   font-weight: 300;
   color: var(--color-text);
