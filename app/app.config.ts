@@ -4,6 +4,7 @@ export default defineAppConfig({
     dateDay: '18',
     dateMonth: '10',
     dateYear: '26',
+    heroPhoto: '/images/hero.jpg',
 
     venues: {
       hall:   { mapsUrl: 'https://maps.app.goo.gl/AUJFmXNE2w8U89dL9' },
@@ -18,10 +19,10 @@ export default defineAppConfig({
     ],
 
     stages: [
-      { key: 'meeting',  year: '2020', photo: '/images/stages/1.jpg' },
+      { key: 'meeting',  year: '2020', photo: '/images/stages/1.webp' },
       { key: 'dating',   year: '2021', photo: '/images/stages/2.webp' },
-      { key: 'proposal', year: '2023', photo: '/images/stages/3.jpg' },
-      { key: 'wedding',  year: '2026', photo: '/images/stages/4.jpg' },
+      { key: 'proposal', year: '2023', photo: '/images/stages/3.webp' },
+      { key: 'wedding',  year: '2026', photo: '/images/stages/4.webp' },
     ],
   },
 })
