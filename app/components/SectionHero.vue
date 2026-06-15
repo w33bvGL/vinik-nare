@@ -4,19 +4,18 @@ const config = useAppConfig()
 
 const heroRef      = ref<HTMLElement | null>(null)
 const dateRef      = ref<HTMLElement | null>(null)
-const vruleRef     = ref<HTMLElement | null>(null)
 const namesRef     = ref<HTMLElement | null>(null)
 const photoWrapRef = ref<HTMLElement | null>(null)
 const photoImgRef  = ref<HTMLImageElement | null>(null)
 const ctaRef       = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { $gsap } = useNuxtApp() as any
   if (!$gsap) return
 
   const tl = $gsap.timeline({ defaults: { ease: 'power3.out' } })
 
+  // Анимация появления фото
   if (photoWrapRef.value && photoImgRef.value) {
     tl.fromTo(
         photoWrapRef.value,
@@ -27,14 +26,15 @@ onMounted(() => {
         .from(photoImgRef.value, { scale: 1.1, duration: 2.6, ease: 'power2.out' }, 0.0)
   }
 
-  tl.from(dateRef.value,  { opacity: 0, x: -28, duration: 0.9 }, 0.5)
-      .from(vruleRef.value, { scaleY: 0, transformOrigin: 'top center', duration: 0.7, ease: 'power2.inOut' }, 0.85)
-      .from(namesRef.value?.children ?? [], { opacity: 0, y: 40, duration: 1.1, stagger: 0.16, ease: 'power4.out' }, 0.9)
-      .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.6)
+  // Анимации текста
+  tl.from(dateRef.value,  { opacity: 0, x: -40, duration: 0.9 }, 0.5)
+      .from(namesRef.value, { opacity: 0, y: 30, duration: 1.1 }, 0.8)
+      .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.2)
 
+  // Параллакс фото
   if (photoImgRef.value) {
     $gsap.to(photoImgRef.value, {
-      yPercent: -12,
+      yPercent: -10,
       ease: 'none',
       scrollTrigger: {
         trigger: heroRef.value,
@@ -48,240 +48,138 @@ onMounted(() => {
 </script>
 
 <template>
-  <section ref="heroRef" class="hero" aria-label="Invitation">
-
-    <div
-        v-if="config.wedding.heroPhoto"
-        ref="photoWrapRef"
-        class="hero__photo-wrap"
-        aria-hidden="true"
-    >
-      <img
-          ref="photoImgRef"
-          :src="config.wedding.heroPhoto"
-          alt=""
-          class="hero__photo photo"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-      />
-    </div>
+  <section ref="heroRef" class="hero">
 
     <div class="hero__content">
-
-      <div class="hero__layout">
-        <div ref="dateRef" class="hero__date" aria-label="Wedding date">
-          <span class="hero__num">{{ config.wedding.dateDay }}</span>
-          <span class="hero__num-dot" aria-hidden="true" />
-          <span class="hero__num">{{ config.wedding.dateMonth }}</span>
-          <span class="hero__num-dot" aria-hidden="true" />
-          <span class="hero__num">{{ config.wedding.dateYear }}</span>
-        </div>
-
-        <div ref="vruleRef" class="hero__vrule" aria-hidden="true" />
-
-        <div ref="namesRef" class="hero__names">
-          <span class="hero__name">{{ t('names.groom') }}</span>
-          <span class="hero__amp" aria-hidden="true">&amp;</span>
-          <span class="hero__name">{{ t('names.bride') }}</span>
-        </div>
+      <div ref="dateRef" class="hero__date">
+        <span class="hero__num">{{ config.wedding.dateDay }}</span>
+        <span class="hero__num">{{ config.wedding.dateMonth }}</span>
+        <span class="hero__num">{{ config.wedding.dateYear }}</span>
       </div>
 
       <div ref="ctaRef" class="hero__cta">
         <UiDivider variant="short" />
-        <div class="hero_description">
-          <p>ոդպոյդօպոյ ոդյոպօդյոպօ օպոյդպօոյդօպոյոօդօ ոօդյոօդյ</p>
-        </div>
+        <p class="hero__description">ոդպոյդօպոյ ոդյոպօդյոպօ օպոյդպօոյդօպոյոօդօ ոօդյոօդյ</p>
         <div class="hero__actions">
           <UiButton as="a" href="#rsvp" variant="filled">{{ t('hero.rsvpCta') }}</UiButton>
           <UiButton as="a" href="#program" variant="outline">{{ t('hero.programCta') }}</UiButton>
         </div>
-        <span class="hero__scroll-line" aria-hidden="true" />
       </div>
-
     </div>
+
+    <div ref="photoWrapRef" class="hero__photo-wrap">
+      <img
+          ref="photoImgRef"
+          :src="config.wedding.heroPhoto"
+          alt="Wedding Hero"
+          class="hero__photo"
+      />
+      <div ref="namesRef" class="hero__names-overlay">
+        <span class="hero__name--white">{{ t('names.groom') }}</span>
+        <span class="hero__amp--white">&amp;</span>
+        <span class="hero__name--white">{{ t('names.bride') }}</span>
+      </div>
+    </div>
+
   </section>
 </template>
 
 <style scoped>
-/* ── Base Hero ── */
 .hero {
   position: relative;
   min-height: 100svh;
   display: flex;
-  width: 100%;
-  background-color: var(--color-bg); /* Всегда белый/светлый фон */
+  background-color: var(--color-bg);
   overflow: hidden;
 }
 
-/* ── Photo (Right 50%) ── */
+/* Левая колонка (Текст) */
+.hero__content {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-8);
+  gap: var(--space-12);
+}
+
+/* Правая колонка (Фото + Имена) */
 .hero__photo-wrap {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 50%; /* Строго 50% ширины */
-  z-index: 0;
+  position: relative;
+  width: 50%;
+  height: 100vh;
   overflow: hidden;
-}
-
-/* На мобилке фото занимает верхнюю часть */
-@media (max-width: 767px) {
-  .hero__photo-wrap {
-    width: 100%;
-    height: 45vh;
-    bottom: auto;
-  }
 }
 
 .hero__photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
-  display: block;
-  will-change: transform;
 }
 
-/* ── Content Container (Left 50%) ── */
-.hero__content {
-  position: relative;
-  z-index: 1;
-  width: 50%; /* Текст ограничен левой половиной */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: var(--space-8) var(--space-6);
+/* Имена поверх фото */
+/* ── Имена поверх фото (Правая сторона) ── */
+.hero__names-overlay {
+  position: absolute;
+  top: var(--space-8); /* Изменено с bottom на top */
+  left: var(--space-8);
+  z-index: 2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 767px) {
-  .hero__content {
-    width: 100%;
-    margin-top: 45vh; /* Отступ вниз, чтобы не перекрывать фото */
-    padding: var(--space-6) var(--space-3);
+/* На мобильных устройствах можно немного уменьшить отступ сверху */
+@media (max-width: 768px) {
+  .hero__names-overlay {
+    top: var(--space-4);
+    left: var(--space-4);
   }
 }
 
-/* ── Layout (Date + Names) ── */
-.hero__layout {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-6);
-  width: 100%;
-  margin-bottom: var(--space-6);
+.hero__name--white {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 6vw, 6rem);
+  font-style: italic;
+  color: #ffffff;
+  line-height: 0.9;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* ── Date (Huge Numbers) ── */
+.hero__amp--white {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  color: rgba(255,255,255,0.8);
+  margin: var(--space-2) 0;
+}
+
+/* Дата (Увеличенные цифры) */
 .hero__date {
   display: flex;
-  flex-direction: column; /* Вертикально, чтобы огромные цифры влезли */
-  align-items: flex-start;
-  gap: 0;
-}
-
-@media (max-width: 767px) {
-  .hero__date {
-    flex-direction: row; /* Горизонтально на мобилке */
-    align-items: center;
-    gap: var(--space-2);
-  }
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .hero__num {
   font-family: var(--font-serif);
-  font-weight: 300;
-  font-variant-numeric: lining-nums;
-  line-height: 0.85; /* Сужаем межстрочный интервал для огромного шрифта */
+  font-size: clamp(5rem, 15vw, 10rem);
+  line-height: 0.8;
   color: var(--color-text-heading);
-  letter-spacing: var(--tracking-tighter);
-  font-size: clamp(4rem, 12vw, 14rem); /* Огромные цифры, занимающие много места */
 }
 
-@media (max-width: 767px) {
-  .hero__num { font-size: clamp(3.5rem, 12vw, 5.5rem); }
-}
-
-/* Скрываем точки на десктопе, так как цифры идут столбиком */
-.hero__num-dot { display: none; }
-
-@media (max-width: 767px) {
-  .hero__num-dot {
-    display: block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-divider);
-  }
-}
-
-/* Скрываем линию, но оставляем элемент для GSAP ref */
-.hero__vrule { display: none; }
-
-/* ── Names ── */
-.hero__names {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.hero__name {
-  font-family: var(--font-serif);
-  font-weight: 300;
-  font-style: italic;
-  line-height: var(--leading-snug);
-  color: var(--color-text-heading);
-  letter-spacing: var(--tracking-tighter);
-  font-size: clamp(3.25rem, 6vw, 5rem);
-}
-
-.hero__amp {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 300;
-  font-size: clamp(2rem, 3vw, 2.5rem);
-  color: var(--squirrel-500);
-  line-height: var(--leading-loose);
-  margin-block: -0.2em;
-}
-
-/* ── CTA / Description ── */
-.hero__cta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  width: 100%;
-  max-width: 480px; /* Чтобы текст легко читался */
-}
-
-.hero_description {
-  color: var(--color-text);
+.hero__description {
+  max-width: 400px;
   font-size: var(--text-lg);
-  line-height: var(--leading-relaxed);
 }
 
 .hero__actions {
   display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  gap: var(--space-4);
 }
 
-/* ── Scroll Line ── */
-.hero__scroll-line {
-  display: block;
-  width: 0.5px;
-  height: 48px;
-  background: linear-gradient(to bottom, var(--color-divider), transparent);
-  animation: scroll-drop 2.4s var(--ease-lux) infinite;
-  transform-origin: top center;
-  margin-top: var(--space-4);
-}
-
-@keyframes scroll-drop {
-  0%   { transform: scaleY(0); opacity: 0; }
-  30%  { opacity: 1; }
-  80%  { transform: scaleY(1); opacity: 0; }
-  100% { transform: scaleY(1); opacity: 0; }
+/* Адаптив для мобильных */
+@media (max-width: 768px) {
+  .hero { flex-direction: column; }
+  .hero__content, .hero__photo-wrap { width: 100%; height: 50vh; }
 }
 </style>
