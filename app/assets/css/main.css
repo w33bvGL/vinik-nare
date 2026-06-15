@@ -1,7 +1,3 @@
-/* ============================================================
-   Global styles — Squirrel Wedding Invitation
-   ============================================================ */
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
@@ -15,7 +11,7 @@ html::-webkit-scrollbar { display: none; }
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: var(--font-sans);
+    font-family: var(--font-sans), sans-serif;
   font-weight: 300;
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
