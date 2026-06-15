@@ -24,8 +24,8 @@ useHead({
 .page-rail {
   max-width: var(--container-max);
   margin-inline: auto;
-  border-left: 0.5px solid var(--color-divider);
-  border-right: 0.5px solid var(--color-divider);
+  border-left: 1px solid var(--color-divider);
+  border-right: 1px solid var(--color-divider);
   min-height: 100dvh;
 }
 </style>

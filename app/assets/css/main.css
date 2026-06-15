@@ -37,7 +37,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Mobile: bump base font slightly for premium feel */
 @media (max-width: 480px) {
   body { font-size: 17px; }
 }
