@@ -67,7 +67,7 @@ onMounted(() => {
       />
     </div>
 
-    <div class="container hero__container">
+    <div class="hero__content">
 
       <div class="hero__layout">
         <div ref="dateRef" class="hero__date" aria-label="Wedding date">
@@ -104,34 +104,33 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* ── Base Hero ── */
 .hero {
   position: relative;
   min-height: 100svh;
   display: flex;
-  flex-direction: column;
-  padding-top: max(var(--space-8), env(safe-area-inset-top, var(--space-8)));
-  padding-bottom: max(var(--space-8), env(safe-area-inset-bottom, var(--space-8)));
+  width: 100%;
+  background-color: var(--color-bg); /* Всегда белый/светлый фон */
   overflow: hidden;
 }
 
+/* ── Photo (Right 50%) ── */
 .hero__photo-wrap {
   position: absolute;
-  top: var(--space-6);
-  bottom: var(--space-6);
-  right: max(var(--space-3), calc((100% - 780px) / 2 + var(--space-3)));
-  width: clamp(160px, 28vw, 380px);
-  overflow: hidden;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%; /* Строго 50% ширины */
   z-index: 0;
+  overflow: hidden;
 }
 
+/* На мобилке фото занимает верхнюю часть */
 @media (max-width: 767px) {
   .hero__photo-wrap {
-    top: auto;
-    bottom: var(--space-6);
-    right: var(--space-3);
-    width: clamp(120px, 38vw, 200px);
-    height: 48vw;
-    max-height: 280px;
+    width: 100%;
+    height: 45vh;
+    bottom: auto;
   }
 }
 
@@ -144,49 +143,48 @@ onMounted(() => {
   will-change: transform;
 }
 
-.hero__container {
+/* ── Content Container (Left 50%) ── */
+.hero__content {
   position: relative;
   z-index: 1;
-  flex: 1;
+  width: 50%; /* Текст ограничен левой половиной */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-8);
+  justify-content: center;
+  padding: var(--space-8) var(--space-6);
 }
 
-.hero__layout {
-  padding-top: 100px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .hero__layout {
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: start;
-    gap: var(--space-8);
+@media (max-width: 767px) {
+  .hero__content {
+    width: 100%;
+    margin-top: 45vh; /* Отступ вниз, чтобы не перекрывать фото */
+    padding: var(--space-6) var(--space-3);
   }
 }
 
-.hero__date {
+/* ── Layout (Date + Names) ── */
+.hero__layout {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-2);
-  order: 2;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+  width: 100%;
+  margin-bottom: var(--space-6);
 }
 
-@media (min-width: 768px) {
+/* ── Date (Huge Numbers) ── */
+.hero__date {
+  display: flex;
+  flex-direction: column; /* Вертикально, чтобы огромные цифры влезли */
+  align-items: flex-start;
+  gap: 0;
+}
+
+@media (max-width: 767px) {
   .hero__date {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0;
-    order: 0;
+    flex-direction: row; /* Горизонтально на мобилке */
+    align-items: center;
+    gap: var(--space-2);
   }
 }
 
@@ -194,52 +192,37 @@ onMounted(() => {
   font-family: var(--font-serif);
   font-weight: 300;
   font-variant-numeric: lining-nums;
-  line-height: var(--leading-tight);
+  line-height: 0.85; /* Сужаем межстрочный интервал для огромного шрифта */
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  font-size: clamp(4rem, 12vw, 14rem); /* Огромные цифры, занимающие много места */
 }
 
-@media (min-width: 768px) {
-  .hero__num { font-size: clamp(2.5rem, 5.5vw, 4.5rem); }
+@media (max-width: 767px) {
+  .hero__num { font-size: clamp(3.5rem, 12vw, 5.5rem); }
 }
 
-.hero__num-dot {
-  display: block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--color-divider);
-  flex-shrink: 0;
-}
+/* Скрываем точки на десктопе, так как цифры идут столбиком */
+.hero__num-dot { display: none; }
 
-@media (min-width: 768px) {
-  .hero__num-dot { display: none; }
-}
-
-/* ── Vrule ── */
-.hero__vrule { display: none; }
-
-@media (min-width: 768px) {
-  .hero__vrule {
+@media (max-width: 767px) {
+  .hero__num-dot {
     display: block;
-    width: 0.5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
     background: var(--color-divider);
-    align-self: stretch;
-    flex-shrink: 0;
   }
 }
+
+/* Скрываем линию, но оставляем элемент для GSAP ref */
+.hero__vrule { display: none; }
 
 /* ── Names ── */
 .hero__names {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  order: 1;
-}
-
-@media (min-width: 768px) {
-  .hero__names { justify-content: center; }
 }
 
 .hero__name {
@@ -249,38 +232,42 @@ onMounted(() => {
   line-height: var(--leading-snug);
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(3.25rem, 10vw, 5rem);
-}
-
-@media (min-width: 768px) {
-  .hero__name { font-size: clamp(3rem, 5vw, 4.5rem); }
+  font-size: clamp(3.25rem, 6vw, 5rem);
 }
 
 .hero__amp {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-size: clamp(2rem, 3vw, 2.5rem);
   color: var(--squirrel-500);
   line-height: var(--leading-loose);
-  margin-block: -0.15em;
+  margin-block: -0.2em;
 }
 
+/* ── CTA / Description ── */
 .hero__cta {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-4);
   width: 100%;
+  max-width: 480px; /* Чтобы текст легко читался */
+}
+
+.hero_description {
+  color: var(--color-text);
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
 }
 
 .hero__actions {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-3);
   flex-wrap: wrap;
-  justify-content: start;
 }
 
+/* ── Scroll Line ── */
 .hero__scroll-line {
   display: block;
   width: 0.5px;
@@ -288,6 +275,7 @@ onMounted(() => {
   background: linear-gradient(to bottom, var(--color-divider), transparent);
   animation: scroll-drop 2.4s var(--ease-lux) infinite;
   transform-origin: top center;
+  margin-top: var(--space-4);
 }
 
 @keyframes scroll-drop {
