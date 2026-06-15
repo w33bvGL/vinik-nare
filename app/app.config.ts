@@ -4,7 +4,7 @@ export default defineAppConfig({
     dateDay: '18',
     dateMonth: '10',
     dateYear: '26',
-    heroPhoto: '/images/hero.jpg',
+    heroPhoto: '/images/hero.webp',
 
     venues: {
       hall:   { mapsUrl: 'https://maps.app.goo.gl/AUJFmXNE2w8U89dL9' },

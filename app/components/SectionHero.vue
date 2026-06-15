@@ -66,10 +66,10 @@ onMounted(() => {
         <UiDivider variant="short" />
 
         <div class="hero__actions">
-          <UiButton as="a" href="#rsvp" variant="filled" size="lg">
+          <UiButton as="a" href="#rsvp" variant="filled">
             {{ t('hero.rsvpCta') }}
           </UiButton>
-          <UiButton as="a" href="#program" variant="outline" size="lg">
+          <UiButton as="a" href="#program" variant="outline">
             {{ t('hero.programCta') }}
           </UiButton>
         </div>
