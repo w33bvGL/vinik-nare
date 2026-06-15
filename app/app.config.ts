@@ -1,8 +1,8 @@
 export default defineAppConfig({
   wedding: {
-    dateISO: '2026-09-17T17:00:00',
-    dateDay: '17',
-    dateMonth: '09',
+    dateISO: '2026-10-18T00:00:00',
+    dateDay: '18',
+    dateMonth: '10',
     dateYear: '26',
 
     venue: {

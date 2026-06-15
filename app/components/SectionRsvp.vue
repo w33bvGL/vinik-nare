@@ -122,10 +122,9 @@ onMounted(() => {
               input-id="rsvp-name"
               data-gsap
             >
-              <input
+              <UiInput
                 id="rsvp-name"
                 v-model="name"
-                class="rsvp__input"
                 type="text"
                 :placeholder="t('rsvp.namePlaceholder')"
                 autocomplete="name"
@@ -141,10 +140,9 @@ onMounted(() => {
                 :label="t('rsvp.guestsLabel')"
                 input-id="rsvp-guests"
               >
-                <input
+                <UiInput
                   id="rsvp-guests"
-                  v-model.number="guests"
-                  class="rsvp__input"
+                  v-model="guests"
                   type="number"
                   :placeholder="t('rsvp.guestsPlaceholder')"
                   min="1"
@@ -159,10 +157,9 @@ onMounted(() => {
               input-id="rsvp-wish"
               data-gsap
             >
-              <textarea
+              <UiTextarea
                 id="rsvp-wish"
                 v-model="wish"
-                class="rsvp__input rsvp__textarea"
                 :placeholder="t('rsvp.wishPlaceholder')"
                 rows="3"
                 maxlength="400"
@@ -241,31 +238,6 @@ onMounted(() => {
   flex-direction: column;
   gap: var(--space-4);
 }
-
-/* Native inputs (used via slot in UiFormField) */
-.rsvp__input {
-  width: 100%;
-  padding: 10px 0;
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  font-weight: 300;
-  color: var(--color-text);
-  background: transparent;
-  border: none;
-  border-bottom: 0.5px solid var(--color-divider);
-  outline: none;
-  letter-spacing: var(--tracking-wide);
-  resize: none;
-  transition: border-color var(--dur-default) var(--ease-gentle);
-  -moz-appearance: textfield;
-}
-.rsvp__input::-webkit-inner-spin-button,
-.rsvp__input::-webkit-outer-spin-button { -webkit-appearance: none; }
-.rsvp__input::placeholder { color: var(--color-text-disabled); }
-.rsvp__input:focus { border-bottom-color: var(--color-text-heading); }
-.rsvp__input:focus::placeholder { opacity: 0; transition: opacity var(--dur-fast) ease; }
-.rsvp__input:disabled { opacity: 0.5; cursor: not-allowed; }
-.rsvp__textarea { line-height: var(--leading-relaxed); }
 
 .rsvp__error {
   font-family: var(--font-sans);
