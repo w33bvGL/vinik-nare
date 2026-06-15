@@ -2,19 +2,31 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  modules: ['@nuxtjs/i18n'],
+
   css: [
     '~/assets/css/tokens.css',
     '~/assets/css/main.css',
   ],
 
+  i18n: {
+    locales: [
+      { code: 'hy', language: 'hy-AM', file: 'hy.json', name: 'Հայ' },
+      { code: 'ru', language: 'ru-RU', file: 'ru.json', name: 'Рус' },
+      { code: 'en', language: 'en-US', file: 'en.json', name: 'Eng' },
+    ],
+    defaultLocale: 'hy',
+    langDir: 'locales/',
+    strategy: 'no_prefix',
+    lazy: true,
+  },
+
   app: {
     head: {
-      title: 'Виник & Нарэ',
-      htmlAttrs: { lang: 'ru' },
+      htmlAttrs: { lang: 'hy' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Приглашение на свадьбу Виника и Нарэ' },
         { name: 'theme-color', content: '#fbfbf8' },
       ],
       link: [
@@ -27,6 +39,4 @@ export default defineNuxtConfig({
       ],
     },
   },
-
-  modules: ['@nuxtjs/i18n'],
 })

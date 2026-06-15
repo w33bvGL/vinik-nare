@@ -5,11 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <hr
-    class="divider"
-    :class="`divider--${variant ?? 'full'}`"
-    aria-hidden="true"
-  />
+  <hr class="divider" :class="`divider--${variant ?? 'full'}`" aria-hidden="true" />
 </template>
 
 <style scoped>
@@ -19,13 +15,6 @@ defineProps<{
   height: 0.5px;
   display: block;
 }
-
-.divider--full {
-  width: 100%;
-}
-
-.divider--short {
-  width: 48px;
-  margin-inline: auto;
-}
+.divider--full  { width: 100%; }
+.divider--short { width: 48px; margin-inline: auto; }
 </style>

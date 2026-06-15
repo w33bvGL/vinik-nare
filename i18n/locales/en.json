@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "title": "Vinik & Nare — Wedding",
+    "description": "Wedding invitation of Vinik and Nare"
+  },
+  "names": {
+    "groom": "Vinik",
+    "bride": "Nare"
+  },
+  "date": {
+    "formatted": "September 17, 2026",
+    "rsvpDeadline": "September 1, 2026"
+  },
+  "venues": {
+    "main": "Restaurant «Name»",
+    "registry": "Civil Registry Office",
+    "name": "Restaurant «Name»",
+    "address": "1 Pushkin St, Moscow",
+    "openMap": "Open in Maps"
+  },
+  "hero": {
+    "scrollHint": "Scroll down"
+  },
+  "greeting": {
+    "label": "Dear guest",
+    "heading": "We're getting married",
+    "body": "We invite you to share with us\nthe first moments of our\nnewly formed family."
+  },
+  "countdown": {
+    "until": "Until the wedding",
+    "past": "Today is our day",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes",
+    "seconds": "seconds"
+  },
+  "stages": {
+    "label": "Our story",
+    "meeting": {
+      "title": "First meeting",
+      "description": "It all started with a single glance..."
+    },
+    "dating": {
+      "title": "Getting closer",
+      "description": "We grew closer with every day..."
+    },
+    "proposal": {
+      "title": "The proposal",
+      "description": "The answer to the most important question..."
+    },
+    "wedding": {
+      "title": "The wedding",
+      "description": "Our happiest day together"
+    }
+  },
+  "program": {
+    "label": "Day programme",
+    "items": {
+      "gathering": "Guest arrival",
+      "ceremony": "Wedding ceremony",
+      "banquet": "Celebration dinner"
+    }
+  },
+  "location": {
+    "label": "Venue"
+  },
+  "rsvp": {
+    "label": "RSVP",
+    "meta": "Please let us know by {deadline}",
+    "yes": "I'll be there",
+    "no": "Can't make it",
+    "namePlaceholder": "Your name",
+    "guestsPlaceholder": "Number of guests",
+    "wishPlaceholder": "A wish for the couple (optional)",
+    "submit": "Send",
+    "successHeading": "Response received",
+    "successText": "Thank you! We're so glad you'll be with us.",
+    "error": "Something went wrong. Please try again."
+  },
+  "footer": {
+    "closingDate": "17 · 09 · 2026"
+  },
+  "lang": {
+    "hy": "ՀԱՅ",
+    "ru": "РУС",
+    "en": "ENG"
+  }
+}

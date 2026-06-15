@@ -1,16 +1,16 @@
-import { wedding } from '~/data/wedding'
-
 export function useCountdown() {
-  const days = ref(0)
-  const hours = ref(0)
+  const config = useAppConfig()
+  const weddingDate = new Date(config.wedding.dateISO)
+
+  const days    = ref(0)
+  const hours   = ref(0)
   const minutes = ref(0)
   const seconds = ref(0)
-  const isPast = ref(false)
+  const isPast  = ref(false)
   const ticking = ref(false)
 
   function compute() {
-    const diff = wedding.date.getTime() - Date.now()
-
+    const diff = weddingDate.getTime() - Date.now()
     if (diff <= 0) {
       isPast.value = true
       days.value = hours.value = minutes.value = seconds.value = 0
@@ -21,10 +21,9 @@ export function useCountdown() {
     hours.value   = Math.floor((diff % 86_400_000) / 3_600_000)
     minutes.value = Math.floor((diff % 3_600_000) / 60_000)
 
-    const prevSeconds = seconds.value
-    seconds.value = Math.floor((diff % 60_000) / 1000)
-
-    if (prevSeconds !== seconds.value) {
+    const next = Math.floor((diff % 60_000) / 1000)
+    if (next !== seconds.value) {
+      seconds.value = next
       ticking.value = true
       setTimeout(() => { ticking.value = false }, 80)
     }

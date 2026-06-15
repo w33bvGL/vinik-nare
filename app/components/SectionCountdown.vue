@@ -1,70 +1,62 @@
 <script setup lang="ts">
-import { wedding } from '~/data/wedding'
-
+const { t } = useI18n()
 const { days, hours, minutes, seconds, isPast, ticking } = useCountdown()
 
+const rootRef = ref<HTMLElement | null>(null)
+const { revealGroup } = useGsapReveal()
+
+onMounted(() => revealGroup(rootRef, '[data-gsap]', { stagger: 0.1 }))
+
 const units = computed(() => [
-  { value: days,    label: 'дней' },
-  { value: hours,   label: 'часов' },
-  { value: minutes, label: 'минут' },
-  { value: seconds, label: 'секунд', ticking: ticking },
+  { value: days,    key: 'days' },
+  { value: hours,   key: 'hours' },
+  { value: minutes, key: 'minutes' },
+  { value: seconds, key: 'seconds', tick: ticking },
 ])
 </script>
 
 <template>
-  <section class="section countdown" aria-labelledby="countdown-heading">
+  <section ref="rootRef" class="section countdown" aria-labelledby="countdown-heading">
     <div class="container">
 
-      <AppDivider variant="full" />
+      <UiDivider variant="full" />
 
-      <div class="countdown__inner">
-
-        <p
-          id="countdown-heading"
-          class="countdown__date reveal"
-          style="transition-delay: 0ms"
-        >
-          {{ wedding.dateFormatted }}
+      <div class="countdown__body">
+        <p id="countdown-heading" data-gsap class="countdown__date">
+          {{ t('date.formatted') }}
         </p>
 
         <template v-if="!isPast">
-          <p class="countdown__sub reveal" style="transition-delay: 80ms">
-            До свадьбы осталось
-          </p>
+          <p data-gsap class="countdown__sub">{{ t('countdown.until') }}</p>
 
-          <div class="countdown__grid reveal" style="transition-delay: 160ms" aria-live="polite">
+          <div data-gsap class="countdown__grid" aria-live="polite">
             <div
               v-for="unit in units"
-              :key="unit.label"
+              :key="unit.key"
               class="countdown__unit"
             >
               <span
                 class="countdown__num"
-                :class="{ 'countdown__num--tick': unit.ticking?.value }"
+                :class="{ 'countdown__num--tick': unit.tick?.value }"
               >
                 {{ String(unit.value.value).padStart(2, '0') }}
               </span>
-              <span class="countdown__label">{{ unit.label }}</span>
+              <span class="countdown__label">{{ t(`countdown.${unit.key}`) }}</span>
             </div>
           </div>
         </template>
 
-        <template v-else>
-          <p class="countdown__past reveal" style="transition-delay: 80ms">
-            Сегодня наш день
-          </p>
-        </template>
-
+        <p v-else data-gsap class="countdown__past">{{ t('countdown.past') }}</p>
       </div>
 
-      <AppDivider variant="full" />
+      <UiDivider variant="full" />
 
     </div>
   </section>
 </template>
 
 <style scoped>
-.countdown__inner {
+.countdown__body {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,10 +107,7 @@ const units = computed(() => [
   font-variant-numeric: tabular-nums lining-nums;
   transition: opacity var(--dur-instant) ease;
 }
-
-.countdown__num--tick {
-  opacity: 0.5;
-}
+.countdown__num--tick { opacity: 0.45; }
 
 .countdown__label {
   font-family: var(--font-sans);

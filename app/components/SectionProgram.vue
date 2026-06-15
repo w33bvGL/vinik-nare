@@ -1,21 +1,43 @@
 <script setup lang="ts">
-import { wedding } from '~/data/wedding'
+const { t } = useI18n()
+const { items } = useProgram()
+
+const rootRef = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { $gsap } = useNuxtApp() as any
+  if (!$gsap || !rootRef.value) return
+
+  $gsap.from(rootRef.value.querySelector('.program__label'), {
+    opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: rootRef.value, start: 'top 80%', once: true },
+  })
+
+  $gsap.from(rootRef.value.querySelectorAll('.program__item'), {
+    opacity: 0,
+    y: 30,
+    duration: 0.75,
+    stagger: 0.12,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: rootRef.value, start: 'top 75%', once: true },
+  })
+})
 </script>
 
 <template>
-  <section class="section program" aria-labelledby="program-heading">
+  <section ref="rootRef" class="section program" aria-labelledby="program-heading">
     <div class="container">
 
-      <p id="program-heading" class="program__label reveal" style="transition-delay: 0ms">
-        Программа дня
+      <p id="program-heading" class="program__label">
+        {{ t('program.label') }}
       </p>
 
       <ol class="program__list" role="list">
         <li
-          v-for="(item, i) in wedding.program"
+          v-for="item in items"
           :key="item.time"
-          class="program__item reveal"
-          :style="`transition-delay: ${80 + i * 100}ms`"
+          class="program__item"
         >
           <time class="program__time" :datetime="item.time">{{ item.time }}</time>
           <div class="program__content">
@@ -40,22 +62,17 @@ import { wedding } from '~/data/wedding'
   margin-bottom: var(--space-6);
 }
 
-.program__list {
-  list-style: none;
-}
+.program__list { list-style: none; }
 
 .program__item {
   display: grid;
-  grid-template-columns: 64px 1fr;
+  grid-template-columns: 72px 1fr;
   gap: var(--space-4);
   align-items: start;
   padding-block: var(--space-4);
   border-top: 0.5px solid var(--color-divider);
 }
-
-.program__item:last-child {
-  border-bottom: 0.5px solid var(--color-divider);
-}
+.program__item:last-child { border-bottom: 0.5px solid var(--color-divider); }
 
 .program__time {
   font-family: var(--font-serif);

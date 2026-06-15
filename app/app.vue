@@ -1,5 +1,10 @@
 <script setup lang="ts">
-useScrollReveal()
+const { t } = useI18n()
+
+useHead({
+  title: () => t('meta.title'),
+  meta: [{ name: 'description', content: () => t('meta.description') }],
+})
 </script>
 
 <template>
@@ -7,9 +12,9 @@ useScrollReveal()
     <SectionHero />
     <SectionGreeting />
     <SectionCountdown />
+    <SectionStages />
     <SectionProgram />
     <SectionLocation />
-    <SectionDressCode />
     <SectionRsvp />
     <SectionFooter />
   </main>

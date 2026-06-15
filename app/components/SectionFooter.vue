@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { wedding } from '~/data/wedding'
+const { t } = useI18n()
 </script>
 
 <template>
   <footer class="footer" role="contentinfo">
     <div class="container footer__inner">
 
-      <AppDivider variant="full" />
+      <UiDivider variant="full" />
 
       <div class="footer__content">
         <p class="footer__names">
-          {{ wedding.groom }} &amp; {{ wedding.bride }}
+          {{ t('names.groom') }} &amp; {{ t('names.bride') }}
         </p>
-        <p class="footer__date">{{ wedding.dateFormatted }}</p>
+        <p class="footer__date">{{ t('footer.closingDate') }}</p>
         <WaxSeal :size="32" />
+        <UiLangSwitcher />
       </div>
 
     </div>
@@ -21,9 +22,7 @@ import { wedding } from '~/data/wedding'
 </template>
 
 <style scoped>
-.footer {
-  padding-bottom: var(--space-8);
-}
+.footer { padding-bottom: var(--space-8); }
 
 .footer__inner {
   display: flex;

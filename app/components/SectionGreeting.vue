@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { wedding } from '~/data/wedding'
+const { t } = useI18n()
+
+const rootRef = ref<HTMLElement | null>(null)
+const { revealGroup } = useGsapReveal()
+
+onMounted(() => revealGroup(rootRef, '[data-gsap]', { stagger: 0.12 }))
 </script>
 
 <template>
-  <section class="section greeting" aria-labelledby="greeting-heading">
+  <section ref="rootRef" class="section greeting" aria-labelledby="greeting-heading">
     <div class="container greeting__inner">
 
-      <p class="greeting__label reveal" style="transition-delay: 0ms">
-        Дорогой гость
-      </p>
+      <UiTag data-gsap :label="t('greeting.label')" />
 
-      <h2 id="greeting-heading" class="greeting__heading reveal" style="transition-delay: 80ms">
-        Мы женимся!
+      <h2 id="greeting-heading" data-gsap class="greeting__heading">
+        {{ t('greeting.heading') }}
       </h2>
 
-      <AppDivider variant="short" />
+      <UiDivider data-gsap variant="short" />
 
-      <p class="greeting__body reveal" style="transition-delay: 160ms">
-        Приглашаем вас разделить с нами<br>
-        первые мгновения нашего семейного счастья.
-      </p>
+      <p data-gsap class="greeting__body" v-html="t('greeting.body').replace(/\n/g, '<br>')" />
 
-      <p class="greeting__names reveal" style="transition-delay: 240ms">
-        {{ wedding.groom }} &amp; {{ wedding.bride }}
+      <p data-gsap class="greeting__names">
+        {{ t('names.groom') }} &amp; {{ t('names.bride') }}
       </p>
 
     </div>
@@ -40,14 +40,6 @@ import { wedding } from '~/data/wedding'
   margin-inline: auto;
 }
 
-.greeting__label {
-  font-family: var(--font-sc);
-  font-weight: 300;
-  font-size: var(--text-xl);
-  letter-spacing: var(--tracking-widest);
-  color: var(--color-text-secondary);
-}
-
 .greeting__heading {
   font-family: var(--font-serif);
   font-weight: 300;
@@ -63,7 +55,6 @@ import { wedding } from '~/data/wedding'
   font-size: var(--text-lg);
   line-height: var(--leading-loose);
   color: var(--color-text);
-  letter-spacing: var(--tracking-wide);
 }
 
 .greeting__names {

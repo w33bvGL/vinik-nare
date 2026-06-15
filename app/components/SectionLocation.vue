@@ -1,34 +1,39 @@
 <script setup lang="ts">
-import { wedding } from '~/data/wedding'
+const { t } = useI18n()
+const config = useAppConfig()
+
+const rootRef = ref<HTMLElement | null>(null)
+const { revealGroup } = useGsapReveal()
+
+onMounted(() => revealGroup(rootRef, '[data-gsap]', { stagger: 0.1 }))
 </script>
 
 <template>
-  <section class="section location" aria-labelledby="location-heading">
+  <section ref="rootRef" class="section location" aria-labelledby="location-heading">
     <div class="container location__inner">
 
-      <p class="location__label reveal" style="transition-delay: 0ms">
-        Место проведения
-      </p>
+      <UiTag data-gsap :label="t('location.label')" />
 
-      <AppDivider variant="short" />
+      <UiDivider data-gsap variant="short" />
 
-      <h2 id="location-heading" class="location__venue reveal" style="transition-delay: 80ms">
-        {{ wedding.venue.name }}
+      <h2 id="location-heading" data-gsap class="location__venue">
+        {{ t('venues.name') }}
       </h2>
 
-      <address class="location__address reveal" style="transition-delay: 160ms">
-        {{ wedding.venue.address }}
+      <address data-gsap class="location__address">
+        {{ t('venues.address') }}
       </address>
 
-      <a
-        class="btn reveal"
-        :href="wedding.venue.mapsUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="transition-delay: 240ms"
+      <UiButton
+        data-gsap
+        as="a"
+        :href="config.wedding.venue.mapsUrl"
+        :external="true"
+        variant="outline"
+        class="location__cta"
       >
-        Открыть на карте
-      </a>
+        {{ t('venues.openMap') }}
+      </UiButton>
 
     </div>
   </section>
@@ -41,14 +46,6 @@ import { wedding } from '~/data/wedding'
   align-items: center;
   gap: var(--space-4);
   text-align: center;
-}
-
-.location__label {
-  font-family: var(--font-sc);
-  font-size: var(--text-xl);
-  font-weight: 300;
-  letter-spacing: var(--tracking-widest);
-  color: var(--color-text-secondary);
 }
 
 .location__venue {
@@ -70,39 +67,5 @@ import { wedding } from '~/data/wedding'
   letter-spacing: var(--tracking-wide);
 }
 
-/* Outline button — shared pattern */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 32px;
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
-  color: var(--color-accent);
-  background: transparent;
-  border: 1px solid var(--color-accent);
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background var(--dur-default) var(--ease-gentle),
-    color var(--dur-default) var(--ease-gentle);
-  margin-top: var(--space-2);
-}
-
-.btn:hover {
-  background: var(--color-hover-fill);
-  color: var(--color-accent-hover);
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
-}
-
-.btn:active {
-  background: var(--squirrel-300);
-}
+.location__cta { margin-top: var(--space-2); }
 </style>
