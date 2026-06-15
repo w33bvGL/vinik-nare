@@ -19,7 +19,9 @@
     "openMap": "Open in Maps"
   },
   "hero": {
-    "scrollHint": "Scroll down"
+    "scrollHint": "Scroll down",
+    "rsvpCta": "Confirm",
+    "programCta": "Programme"
   },
   "greeting": {
     "label": "Dear guest",

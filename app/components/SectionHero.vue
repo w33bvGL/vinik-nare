@@ -8,6 +8,12 @@ const vruleRef = ref<HTMLElement | null>(null)
 const namesRef = ref<HTMLElement | null>(null)
 const ctaRef   = ref<HTMLElement | null>(null)
 
+const heroBg = computed(() =>
+  config.wedding.heroPhoto
+    ? `url('${config.wedding.heroPhoto}')`
+    : undefined,
+)
+
 onMounted(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { $gsap } = useNuxtApp() as any
@@ -18,12 +24,20 @@ onMounted(() => {
   tl.from(dateRef.value, { opacity: 0, y: 28, duration: 1 }, 0.2)
     .from(vruleRef.value, { scaleY: 0, transformOrigin: 'top center', duration: 0.7, ease: 'power2.out' }, 0.75)
     .from(namesRef.value?.children ?? [], { opacity: 0, y: 28, duration: 0.9, stagger: 0.12 }, 0.9)
-    .from(ctaRef.value, { opacity: 0, y: 20, duration: 0.7 }, 1.55)
+    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 20, duration: 0.7, stagger: 0.1 }, 1.55)
 })
 </script>
 
 <template>
-  <section ref="heroRef" class="hero" aria-label="Invitation">
+  <section
+    ref="heroRef"
+    class="hero"
+    :class="{ 'hero--photo': config.wedding.heroPhoto }"
+    :style="heroBg ? { backgroundImage: heroBg } : undefined"
+    aria-label="Invitation"
+  >
+    <div v-if="config.wedding.heroPhoto" class="hero__overlay" aria-hidden="true" />
+
     <div class="container hero__container">
 
       <div class="hero__layout">
@@ -51,15 +65,13 @@ onMounted(() => {
       <div ref="ctaRef" class="hero__cta">
         <UiDivider variant="short" />
 
-        <div v-if="config.wedding.heroPhoto" class="hero__photo-wrap" aria-hidden="true">
-          <img
-            :src="config.wedding.heroPhoto"
-            alt=""
-            class="hero__photo photo"
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-          />
+        <div class="hero__actions">
+          <UiButton as="a" href="#rsvp" variant="filled" size="lg">
+            {{ t('hero.rsvpCta') }}
+          </UiButton>
+          <UiButton as="a" href="#program" variant="outline" size="lg">
+            {{ t('hero.programCta') }}
+          </UiButton>
         </div>
 
         <span class="hero__scroll-line" aria-hidden="true" />
@@ -71,6 +83,7 @@ onMounted(() => {
 
 <style scoped>
 .hero {
+  position: relative;
   min-height: 100svh;
   display: flex;
   align-items: center;
@@ -79,11 +92,31 @@ onMounted(() => {
   padding-bottom: max(var(--space-8), env(safe-area-inset-bottom, var(--space-8)));
 }
 
+.hero--photo {
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
 @media (min-width: 768px) {
   .hero { padding-block: var(--space-16); }
 }
 
+/* Overlay — keeps dark text legible over photo */
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(251, 251, 248, 0.93) 0%,
+    rgba(251, 251, 248, 0.78) 40%,
+    rgba(251, 251, 248, 0.88) 100%
+  );
+  pointer-events: none;
+}
+
 .hero__container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -133,7 +166,7 @@ onMounted(() => {
   line-height: var(--leading-tight);
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(2.5rem, 10vw, 6.5rem);
+  font-size: clamp(3.5rem, 12vw, 6.5rem);
 }
 
 .hero__num-dot {
@@ -183,14 +216,14 @@ onMounted(() => {
   line-height: var(--leading-snug);
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-size: clamp(3.25rem, 10vw, 5.5rem);
 }
 
 .hero__amp {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(2rem, 5vw, 2.5rem);
   color: var(--squirrel-500);
   line-height: var(--leading-loose);
   margin-block: -0.15em;
@@ -205,28 +238,17 @@ onMounted(() => {
   width: 100%;
 }
 
-/* ── Photo ── */
-.hero__photo-wrap {
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
+/* ── Action buttons ── */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
 }
 
-@media (min-width: 768px) {
-  .hero__photo-wrap {
-    max-width: 380px;
-    aspect-ratio: 2 / 3;
-  }
-}
-
-.hero__photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-  transition: transform var(--dur-lux) var(--ease-lux);
+@media (max-width: 480px) {
+  .hero__actions { flex-direction: column; width: 100%; }
+  .hero__actions :deep(.btn) { width: 100%; }
 }
 
 /* ── Scroll line ── */

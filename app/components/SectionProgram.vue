@@ -62,7 +62,7 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 </script>
 
 <template>
-  <section ref="sectionRef" class="section program" aria-labelledby="program-heading">
+  <section id="program" ref="sectionRef" class="section program" aria-labelledby="program-heading">
     <div class="container">
       <p id="program-heading" class="program__label">
         {{ t('program.label') }}

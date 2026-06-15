@@ -19,7 +19,9 @@
     "openMap": "Открыть на карте"
   },
   "hero": {
-    "scrollHint": "Пролистайте вниз"
+    "scrollHint": "Пролистайте вниз",
+    "rsvpCta": "Подтвердить",
+    "programCta": "Программа"
   },
   "greeting": {
     "label": "Дорогой гость",

@@ -71,7 +71,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section ref="rootRef" class="section rsvp" aria-labelledby="rsvp-heading">
+  <section id="rsvp" ref="rootRef" class="section rsvp" aria-labelledby="rsvp-heading">
     <div class="container">
 
       <UiDivider variant="full" />

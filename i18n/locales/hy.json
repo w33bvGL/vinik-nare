@@ -19,7 +19,9 @@
     "openMap": "Բacel kartezin"
   },
   "hero": {
-    "scrollHint": "Ոլորել ներքև"
+    "scrollHint": "Ոլորել ներքև",
+    "rsvpCta": "Հաստատել",
+    "programCta": "Ծրագիր"
   },
   "greeting": {
     "label": "Հարգելի հյուր",
