@@ -17,11 +17,9 @@ const stages = computed(() =>
 )
 
 onMounted(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { $gsap, $ScrollTrigger } = useNuxtApp() as any
   if (!$gsap) return
 
-  // Reveal section label
   $gsap.from(sectionRef.value?.querySelector('.stages__label'), {
     opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
     scrollTrigger: { trigger: sectionRef.value, start: 'top 80%', once: true },
@@ -40,7 +38,6 @@ onMounted(() => {
     },
   })
 
-  // Stage map dots pop in with stagger
   if (mapDotsRef.value.length) {
     $gsap.from(mapDotsRef.value, {
       opacity: 0,
@@ -152,7 +149,6 @@ function setPhoto(el: HTMLElement | null, i: number) {
         </div>
       </div>
 
-      <!-- Stage cards -->
       <ol class="stages__list" role="list">
         <li
           v-for="(stage, i) in stages"
@@ -162,7 +158,6 @@ function setPhoto(el: HTMLElement | null, i: number) {
           :class="{ 'stages__card--even': i % 2 !== 0 }"
         >
 
-          <!-- Photo -->
           <div class="stages__photo-wrap">
             <img
               :ref="(el) => setPhoto(el as HTMLElement, i)"
