@@ -58,3 +58,9 @@ Shadows:      rgba(14,10,7,...) only
 - [ ] Whether to use the wax seal as a full-page reveal gate or decorative element only
 - [ ] Need photos from couple for treatment
 - [ ] Botanical monogram design (initials В & Н for the seal)
+  palette: [
+  { hex: '#e9e5e2', label: 'Бежевый' },
+  { hex: '#dad3cd', label: 'Нюд' },
+  { hex: '#917e6e', label: 'Тауп' },
+  { hex: '#201913', label: 'Шоколад' },
+  ],
