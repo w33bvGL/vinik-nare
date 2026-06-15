@@ -23,14 +23,14 @@ onMounted(() => {
         { clipPath: 'inset(0 0 100% 0)' },
         { clipPath: 'inset(0 0 0% 0)', duration: 1.6, ease: 'expo.inOut' },
         0.0,
-    )
-        .from(photoImgRef.value, { scale: 1.1, duration: 2.6, ease: 'power2.out' }, 0.0)
+      )
+      .from(photoImgRef.value, { scale: 1.1, duration: 2.6, ease: 'power2.out' }, 0.0)
   }
 
   tl.from(dateRef.value,  { opacity: 0, x: -28, duration: 0.9 }, 0.5)
-      .from(vruleRef.value, { scaleY: 0, transformOrigin: 'top center', duration: 0.7, ease: 'power2.inOut' }, 0.85)
-      .from(namesRef.value?.children ?? [], { opacity: 0, y: 40, duration: 1.1, stagger: 0.16, ease: 'power4.out' }, 0.9)
-      .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.6)
+    .from(vruleRef.value, { scaleY: 0, transformOrigin: 'top center', duration: 0.7, ease: 'power2.inOut' }, 0.85)
+    .from(namesRef.value?.children ?? [], { opacity: 0, y: 40, duration: 1.1, stagger: 0.16, ease: 'power4.out' }, 0.9)
+    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.6)
 
   if (photoImgRef.value) {
     $gsap.to(photoImgRef.value, {
@@ -50,20 +50,21 @@ onMounted(() => {
 <template>
   <section ref="heroRef" class="hero" aria-label="Invitation">
 
+    <!-- Absolute photo — decorative, right side, not touching container edges -->
     <div
-        v-if="config.wedding.heroPhoto"
-        ref="photoWrapRef"
-        class="hero__photo-wrap"
-        aria-hidden="true"
+      v-if="config.wedding.heroPhoto"
+      ref="photoWrapRef"
+      class="hero__photo-wrap"
+      aria-hidden="true"
     >
       <img
-          ref="photoImgRef"
-          :src="config.wedding.heroPhoto"
-          alt=""
-          class="hero__photo photo"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
+        ref="photoImgRef"
+        :src="config.wedding.heroPhoto"
+        alt=""
+        class="hero__photo photo"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
       />
     </div>
 
@@ -89,9 +90,6 @@ onMounted(() => {
 
       <div ref="ctaRef" class="hero__cta">
         <UiDivider variant="short" />
-        <div class="hero_description">
-          <p>ոդպոյդօպոյ ոդյոպօդյոպօ օպոյդպօոյդօպոյոօդօ ոօդյոօդյ</p>
-        </div>
         <div class="hero__actions">
           <UiButton as="a" href="#rsvp" variant="filled">{{ t('hero.rsvpCta') }}</UiButton>
           <UiButton as="a" href="#program" variant="outline">{{ t('hero.programCta') }}</UiButton>
@@ -104,6 +102,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* ── Section ── */
 .hero {
   position: relative;
   min-height: 100svh;
@@ -114,18 +113,26 @@ onMounted(() => {
   overflow: hidden;
 }
 
+/* ── Photo — absolute, decorative, right-side, inset from all edges ── */
 .hero__photo-wrap {
   position: absolute;
+  /* Inset so it never touches any edge of the section */
   top: var(--space-6);
   bottom: var(--space-6);
+  /* Right side, not centered.
+     On wide screens: align with the container's right edge minus a gap.
+     On narrow screens: just keep var(--space-3) from the viewport edge. */
   right: max(var(--space-3), calc((100% - 780px) / 2 + var(--space-3)));
-  width: clamp(160px, 28vw, 380px);
+  /* Width: enough to be decorative, not so much it overwhelms the text */
+  width: clamp(160px, 28vw, 280px);
   overflow: hidden;
   z-index: 0;
+  /* Subtle: photo slightly transparent so cream bg shows through on edges */
 }
 
 @media (max-width: 767px) {
   .hero__photo-wrap {
+    /* On mobile move to bottom-right corner, more compact */
     top: auto;
     bottom: var(--space-6);
     right: var(--space-3);
@@ -155,8 +162,8 @@ onMounted(() => {
   gap: var(--space-8);
 }
 
+/* ── Title row ── */
 .hero__layout {
-  padding-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -168,11 +175,12 @@ onMounted(() => {
   .hero__layout {
     flex-direction: row;
     align-items: stretch;
-    justify-content: start;
+    justify-content: center;
     gap: var(--space-8);
   }
 }
 
+/* ── Date ── */
 .hero__date {
   display: flex;
   flex-direction: row;
@@ -266,6 +274,7 @@ onMounted(() => {
   margin-block: -0.15em;
 }
 
+/* ── CTA ── */
 .hero__cta {
   display: flex;
   flex-direction: column;
@@ -281,6 +290,7 @@ onMounted(() => {
   justify-content: start;
 }
 
+/* ── Scroll line ── */
 .hero__scroll-line {
   display: block;
   width: 0.5px;

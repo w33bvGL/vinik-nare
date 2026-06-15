@@ -15,7 +15,6 @@ useHead({
       <SectionCountdown />
       <SectionStages />
       <SectionProgram />
-      <SectionLocation />
       <SectionRsvp />
     </main>
   </NuxtLayout>
