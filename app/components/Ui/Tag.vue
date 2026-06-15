@@ -9,7 +9,7 @@ defineProps<{ label: string }>()
 <style scoped>
 .tag {
   display: inline-block;
-  font-family: var(--font-sc);
+  font-family: var(--font-sc), sans-serif;
   font-size: var(--text-xs);
   font-weight: 300;
   letter-spacing: var(--tracking-widest);

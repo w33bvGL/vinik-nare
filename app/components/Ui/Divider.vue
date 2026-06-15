@@ -12,7 +12,7 @@ defineProps<{
 .divider {
   border: none;
   background: var(--color-divider);
-  height: 0.5px;
+  height: 1px;
   display: block;
 }
 .divider--full  { width: 100%; }
