@@ -64,14 +64,12 @@ onMounted(() => {
       <div class="rsvp__body">
         <Transition name="fade" mode="out-in">
 
-          <!-- Success -->
           <div v-if="isSuccess" class="rsvp__success" aria-live="polite">
             <WaxSeal :size="64" class="rsvp__seal" />
             <p class="rsvp__success-heading">{{ t('rsvp.successHeading') }}</p>
             <p class="rsvp__success-text">{{ t('rsvp.successText') }}</p>
           </div>
 
-          <!-- Form -->
           <form v-else class="rsvp__form" novalidate @submit.prevent="submit">
 
             <div class="rsvp__header" data-gsap>
@@ -181,10 +179,9 @@ onMounted(() => {
 
 <style scoped>
 .rsvp__body {
-  max-width: 440px;
   margin-inline: auto;
   margin-block: var(--space-8);
-  border: 0.5px solid var(--color-divider);
+  border: 1px solid var(--color-divider);
   padding: var(--space-6) var(--space-4);
 }
 
@@ -192,11 +189,10 @@ onMounted(() => {
   .rsvp__body { padding: var(--space-6); }
 }
 
-/* Header block */
 .rsvp__header { text-align: center; margin-bottom: var(--space-6); }
 
 .rsvp__label {
-  font-family: var(--font-sc);
+  font-family: var(--font-sc),sans-serif;
   font-size: var(--text-xl);
   font-weight: 300;
   letter-spacing: var(--tracking-widest);
@@ -213,7 +209,7 @@ onMounted(() => {
 }
 
 .rsvp__meta {
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), sans-serif;
   font-size: var(--text-sm);
   font-weight: 300;
   color: var(--color-text-secondary);
@@ -226,7 +222,6 @@ onMounted(() => {
   gap: var(--space-4);
 }
 
-/* Attendance pills */
 .rsvp__attend {
   display: flex;
   gap: var(--space-2);
@@ -239,7 +234,7 @@ onMounted(() => {
   justify-content: center;
   gap: var(--space-1);
   padding: 14px 20px;
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), sans-serif;
   font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: var(--tracking-wider);
@@ -275,11 +270,10 @@ onMounted(() => {
 }
 .rsvp__pill--on .rsvp__pill-check { opacity: 1; }
 
-/* Field labels + inputs */
 .rsvp__field { display: flex; flex-direction: column; gap: 6px; }
 
 .rsvp__field-label {
-  font-family: var(--font-sc);
+  font-family: var(--font-sc), sans-serif;
   font-size: var(--text-xs);
   font-weight: 300;
   letter-spacing: var(--tracking-widest);
@@ -290,7 +284,7 @@ onMounted(() => {
 .rsvp__input {
   width: 100%;
   padding: 10px 0;
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), sans-serif;
   font-size: var(--text-base);
   font-weight: 300;
   color: var(--color-text);
