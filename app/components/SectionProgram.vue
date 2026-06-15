@@ -3,6 +3,7 @@ const { t } = useI18n()
 const { items } = useProgram()
 
 const rootRef = ref<HTMLElement | null>(null)
+const lineRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,30 +15,68 @@ onMounted(() => {
     scrollTrigger: { trigger: rootRef.value, start: 'top 82%', once: true },
   })
 
-  rootRef.value.querySelectorAll('.program__card').forEach((card: Element) => {
+  // Line draws top→bottom as you scroll through the section
+  if (lineRef.value) {
+    $gsap.fromTo(lineRef.value,
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: 'none',
+        transformOrigin: 'top center',
+        scrollTrigger: {
+          trigger: rootRef.value,
+          start: 'top 60%',
+          end: 'bottom 55%',
+          scrub: 0.8,
+        },
+      },
+    )
+  }
+
+  // Per-card timeline
+  rootRef.value.querySelectorAll<HTMLElement>('.program__item').forEach((item) => {
+    const isA = item.classList.contains('program__item--a')
+
     const tl = $gsap.timeline({
-      scrollTrigger: { trigger: card, start: 'top 85%', once: true },
+      scrollTrigger: { trigger: item, start: 'top 80%', once: true },
     })
 
-    tl.from(card, { opacity: 0, y: 56, duration: 0.85, ease: 'power3.out' }, 0)
+    // Photo from its side
+    tl.from(item.querySelector('.program__visual'), {
+      opacity: 0, x: isA ? -70 : 70, duration: 0.95, ease: 'power3.out',
+    }, 0)
 
-    const photo = card.querySelector('.program__photo')
+    const photo = item.querySelector('.program__photo')
     if (photo) {
       tl.from(photo, { scale: 1.12, duration: 1.3, ease: 'power2.out' }, 0)
     }
 
-    tl.from(card.querySelector('.program__time'), {
-      opacity: 0, x: -24, duration: 0.6, ease: 'power3.out',
-    }, 0.2)
+    // Content from the opposite side
+    tl.from(item.querySelector('.program__text'), {
+      opacity: 0, x: isA ? 70 : -70, duration: 0.95, ease: 'power3.out',
+    }, 0)
 
-    tl.from(card.querySelector('.program__rule'), {
-      scaleX: 0, duration: 0.5, ease: 'power2.inOut', transformOrigin: 'left',
-    }, 0.35)
+    // Dot pops after card appears
+    tl.from(item.querySelector('.program__dot'), {
+      scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(2.5)',
+    }, 0.3)
 
+    // Time slides down
+    tl.from(item.querySelector('.program__time'), {
+      opacity: 0, y: -18, duration: 0.55, ease: 'power3.out',
+    }, 0.28)
+
+    // Rule expands
+    tl.from(item.querySelector('.program__rule'), {
+      scaleX: 0, duration: 0.45, ease: 'power2.inOut',
+      transformOrigin: isA ? 'left' : 'right',
+    }, 0.42)
+
+    // Content lines stagger
     tl.from(
-      card.querySelectorAll('.program__title, .program__desc, .program__venue, .program__map'),
-      { opacity: 0, y: 14, duration: 0.55, stagger: 0.09, ease: 'power2.out' },
-      0.42,
+      item.querySelectorAll('.program__title, .program__desc, .program__venue, .program__map'),
+      { opacity: 0, y: 12, stagger: 0.09, duration: 0.5, ease: 'power2.out' },
+      0.48,
     )
   })
 })
@@ -51,23 +90,32 @@ onMounted(() => {
         {{ t('program.label') }}
       </p>
 
-      <div class="program__grid">
+      <div class="timeline">
+        <div ref="lineRef" class="timeline__line" aria-hidden="true" />
+
         <article
-          v-for="item in items"
+          v-for="(item, i) in items"
           :key="item.time"
-          class="program__card"
+          class="program__item"
+          :class="i % 2 === 0 ? 'program__item--a' : 'program__item--b'"
         >
-          <div class="program__photo-wrap">
-            <img
-              v-if="item.photo"
-              :src="item.photo"
-              :alt="item.title"
-              class="program__photo"
-            />
-            <div v-else class="program__photo-placeholder" />
+          <div class="program__visual">
+            <div class="program__photo-wrap">
+              <img
+                v-if="item.photo"
+                :src="item.photo"
+                :alt="item.title"
+                class="program__photo"
+              />
+              <div v-else class="program__photo-ph" />
+            </div>
           </div>
 
-          <div class="program__content">
+          <div class="program__node" aria-hidden="true">
+            <span class="program__dot" />
+          </div>
+
+          <div class="program__text">
             <time class="program__time" :datetime="item.time">{{ item.time }}</time>
             <span class="program__rule" aria-hidden="true" />
             <p class="program__title">{{ item.title }}</p>
@@ -81,7 +129,7 @@ onMounted(() => {
               class="program__map"
             >
               {{ t('program.mapLink') }}
-              <span class="program__map-arrow" aria-hidden="true">↗</span>
+              <span aria-hidden="true">↗</span>
             </a>
           </div>
         </article>
@@ -99,31 +147,75 @@ onMounted(() => {
   letter-spacing: var(--tracking-widest);
   color: var(--color-text-secondary);
   text-align: center;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-10);
 }
 
-.program__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
-}
-
-@media (min-width: 560px) {
-  .program__grid { grid-template-columns: 1fr 1fr; }
-}
-
-/* Card */
-.program__card {
-  border: 0.5px solid var(--color-divider);
+/* ── Timeline shell ── */
+.timeline {
+  position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  gap: var(--space-14);
 }
 
-/* Photo */
+.timeline__line {
+  display: none;
+}
+
+/* ── Item: mobile (stacked) ── */
+.program__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.program__node { display: none; }
+
+/* ── Item: desktop (roadmap) ── */
+@media (min-width: 640px) {
+  .timeline__line {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 0.5px;
+    background: var(--color-divider);
+    transform: translateX(-0.25px);
+  }
+
+  .program__item {
+    display: grid;
+    grid-template-columns: 1fr 48px 1fr;
+    align-items: center;
+    gap: 0 var(--space-6);
+  }
+
+  /* --a: photo left | dot | text right */
+  .program__item--a .program__visual { grid-column: 1; grid-row: 1; }
+  .program__item--a .program__node   { grid-column: 2; grid-row: 1; }
+  .program__item--a .program__text   { grid-column: 3; grid-row: 1; }
+
+  /* --b: text left | dot | photo right */
+  .program__item--b .program__text   { grid-column: 1; grid-row: 1; text-align: right; align-items: flex-end; }
+  .program__item--b .program__node   { grid-column: 2; grid-row: 1; }
+  .program__item--b .program__visual { grid-column: 3; grid-row: 1; }
+
+  .program__node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    height: 100%;
+  }
+}
+
+/* ── Photo ── */
 .program__photo-wrap {
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
+  border: 0.5px solid var(--color-divider);
   background: var(--color-hover-fill);
 }
 
@@ -134,25 +226,43 @@ onMounted(() => {
   display: block;
 }
 
-.program__photo-placeholder {
+.program__photo-ph {
   width: 100%;
   height: 100%;
   background: var(--color-hover-fill);
 }
 
-/* Content */
-.program__content {
-  padding: var(--space-5) var(--space-4);
+/* ── Dot ── */
+.program__dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-text-heading);
+  background: var(--color-bg, #fff);
+}
+
+/* ── Text ── */
+.program__text {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  flex: 1;
+}
+
+.program__item--b .program__text {
+  align-items: flex-start; /* mobile: normal */
+}
+
+@media (min-width: 640px) {
+  .program__item--b .program__text {
+    align-items: flex-end;
+  }
 }
 
 .program__time {
   font-family: var(--font-serif);
   font-weight: 300;
-  font-size: clamp(var(--text-3xl), 6vw, var(--text-4xl));
+  font-size: clamp(var(--text-3xl), 5vw, var(--text-4xl));
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--color-text-heading);
   line-height: 1;
@@ -203,14 +313,8 @@ onMounted(() => {
   text-transform: uppercase;
   color: var(--color-accent);
   text-decoration: none;
-  margin-top: auto;
-  padding-top: var(--space-2);
+  margin-top: var(--space-2);
   transition: opacity var(--dur-default) var(--ease-gentle);
 }
 .program__map:hover { opacity: 0.7; }
-
-.program__map-arrow {
-  font-style: normal;
-  font-size: var(--text-sm);
-}
 </style>
