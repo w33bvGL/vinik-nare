@@ -56,7 +56,7 @@ onMounted(() => {
 
       <div ref="ctaRef" class="hero__cta">
         <UiDivider variant="short" />
-        <p class="hero__description">{{ t('hero.description')}}</p>
+        <p class="hero__description">{{ t('hero.description') }}</p>
         <div class="hero__actions">
           <UiButton as="a" href="#rsvp" variant="filled">{{ t('hero.rsvpCta') }}</UiButton>
           <UiButton as="a" href="#program" variant="outline">{{ t('hero.programCta') }}</UiButton>
@@ -71,6 +71,8 @@ onMounted(() => {
           alt="Wedding Hero"
           class="hero__photo"
       />
+      <div class="hero__overlay-dark"></div>
+
       <div ref="namesRef" class="hero__names-overlay">
         <span class="hero__name--white">{{ t('names.groom') }}</span>
         <span class="hero__amp--white">&amp;</span>
@@ -96,7 +98,7 @@ onMounted(() => {
   flex-direction: column;
   justify-content: center;
   padding: var(--space-8);
-  gap: var(--space-12);
+  gap: var(--space-8);
 }
 
 .hero__photo-wrap {
@@ -112,7 +114,17 @@ onMounted(() => {
   object-fit: cover;
 }
 
-/* Центрирование имен по горизонтали */
+/* Слой для прозрачности (затемнения) */
+.hero__overlay-dark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25); /* Легкое затемнение */
+  z-index: 1;
+}
+
 .hero__names-overlay {
   position: absolute;
   top: var(--space-8);
@@ -120,39 +132,34 @@ onMounted(() => {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Центрирует всё содержимое по горизонтали */
-  text-align: center;
+  align-items: center;
   z-index: 2;
-  pointer-events: none; /* Чтобы не мешало кликам, если нужно */
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 
 .hero__name--white {
-  display: block;
   font-family: var(--font-serif);
-  font-size: clamp(3rem, 6vw, 6rem);
+  font-size: clamp(2.5rem, 5vw, 5rem);
   font-style: italic;
   color: #ffffff;
   line-height: 0.9;
 }
 
 .hero__amp--white {
-  display: block;
   font-family: var(--font-serif);
-  font-size: 3rem;
-  color: rgba(255,255,255,0.8);
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.8);
   margin: var(--space-2) 0;
 }
 
 .hero__date {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
 }
 
 .hero__num {
   font-family: var(--font-serif);
-  font-size: clamp(5rem, 15vw, 10rem);
+  font-size: clamp(4rem, 12vw, 8rem);
   line-height: 0.8;
   color: var(--color-text-heading);
 }
@@ -160,16 +167,26 @@ onMounted(() => {
 .hero__description {
   max-width: 400px;
   font-size: var(--text-lg);
+  margin-bottom: var(--space-4);
 }
 
 .hero__actions {
   display: flex;
+  flex-wrap: wrap; /* Кнопки будут переноситься на новую строку при нехватке места */
   gap: var(--space-4);
 }
 
+/* Адаптив */
 @media (max-width: 768px) {
   .hero { flex-direction: column; }
-  .hero__content, .hero__photo-wrap { width: 100%; height: 50vh; }
+  .hero__content {
+    width: 100%;
+    padding: var(--space-4);
+    align-items: center;
+    text-align: center;
+  }
+  .hero__photo-wrap { width: 100%; height: 50vh; }
+  .hero__actions { justify-content: center; }
   .hero__names-overlay { top: var(--space-4); }
 }
 </style>
