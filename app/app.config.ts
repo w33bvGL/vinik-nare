@@ -12,8 +12,8 @@ export default defineAppConfig({
     rsvpEndpoint: '',
 
     program: [
-      { key: 'ceremony', time: '15:00', venueKey: 'church', photo: '/images/program/church.jpg', mapsUrl: '' },
-      { key: 'banquet',  time: '18:00', venueKey: 'hall',   photo: '/images/program/hall.jpg',   mapsUrl: '' },
+      { key: 'ceremony', time: '15:00', venueKey: 'church', photo: '/images/program/1.webp', mapsUrl: 'https://maps.app.goo.gl/Q4TfkThGwWikThZU9' },
+      { key: 'banquet',  time: '18:00', venueKey: 'hall',   photo: '/images/program/2.webp',   mapsUrl: '' },
     ],
 
     stages: [

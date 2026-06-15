@@ -12,10 +12,10 @@
     "rsvpDeadline": "October 1, 2026"
   },
   "venues": {
-    "main": "Restaurant «Name»",
-    "registry": "Civil Registry Office",
-    "name": "Restaurant «Name»",
-    "address": "1 Pushkin St, Moscow",
+    "church": "Surb Hovhannes Avetaranich Church, Artashat",
+    "hall": "Vahagn Hall, Aygavan, Ararat",
+    "name": "Vahagn Hall",
+    "address": "Aygavan, Ararat",
     "openMap": "Open in Maps"
   },
   "hero": {
@@ -55,10 +55,16 @@
   },
   "program": {
     "label": "Day programme",
+    "mapLink": "Open in Maps",
     "items": {
-      "gathering": "Guest arrival",
-      "ceremony": "Wedding ceremony",
-      "banquet": "Celebration dinner"
+      "ceremony": {
+        "title": "Wedding ceremony",
+        "desc": "Solemn wedding ceremony"
+      },
+      "banquet": {
+        "title": "Celebration dinner",
+        "desc": "Festive dinner with family and friends"
+      }
     }
   },
   "location": {
