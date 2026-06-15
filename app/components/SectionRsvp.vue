@@ -99,7 +99,7 @@ onMounted(() => {
               </p>
             </div>
 
-            <RsvpRadioGroup
+            <UiRadioGroup
               v-model="attendance"
               name="attendance"
               :legend="t('rsvp.attendLabel')"
@@ -108,7 +108,7 @@ onMounted(() => {
               data-gsap
             />
 
-            <RsvpRadioGroup
+            <UiRadioGroup
               v-model="side"
               name="side"
               :legend="t('rsvp.sideLabel')"
@@ -117,7 +117,7 @@ onMounted(() => {
               data-gsap
             />
 
-            <RsvpFormField
+            <UiFormField
               :label="t('rsvp.nameLabel')"
               input-id="rsvp-name"
               data-gsap
@@ -133,10 +133,10 @@ onMounted(() => {
                 minlength="2"
                 :disabled="isSubmitting"
               />
-            </RsvpFormField>
+            </UiFormField>
 
             <Transition name="slide">
-              <RsvpFormField
+              <UiFormField
                 v-if="attendance === 'yes'"
                 :label="t('rsvp.guestsLabel')"
                 input-id="rsvp-guests"
@@ -148,13 +148,13 @@ onMounted(() => {
                   type="number"
                   :placeholder="t('rsvp.guestsPlaceholder')"
                   min="1"
-                  max="5"
+                  max="20"
                   :disabled="isSubmitting"
                 />
-              </RsvpFormField>
+              </UiFormField>
             </Transition>
 
-            <RsvpFormField
+            <UiFormField
               :label="t('rsvp.wishLabel')"
               input-id="rsvp-wish"
               data-gsap
@@ -168,7 +168,7 @@ onMounted(() => {
                 maxlength="400"
                 :disabled="isSubmitting"
               />
-            </RsvpFormField>
+            </UiFormField>
 
             <p v-if="state === 'error'" class="rsvp__error" role="alert">
               {{ errorMsg }}
@@ -242,7 +242,7 @@ onMounted(() => {
   gap: var(--space-4);
 }
 
-/* Native inputs (used via slot in RsvpFormField) */
+/* Native inputs (used via slot in UiFormField) */
 .rsvp__input {
   width: 100%;
   padding: 10px 0;
