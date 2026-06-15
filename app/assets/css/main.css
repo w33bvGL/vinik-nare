@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'Sosbanff';
+  src: url('/fonts/sosbanff.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Victory';
+  src: url('/fonts/victory.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
