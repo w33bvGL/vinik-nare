@@ -54,7 +54,6 @@ onMounted(() => {
     })
   }
 
-  // Stage cards reveal with stagger
   if (cardRefs.value.length) {
     cardRefs.value.forEach((card, i) => {
       const isEven = i % 2 !== 0
@@ -93,7 +92,6 @@ onMounted(() => {
     })
   }
 
-  // Active dot highlight on scroll
   cardRefs.value.forEach((card, i) => {
     $ScrollTrigger.create({
       trigger: card,
@@ -132,7 +130,6 @@ function setPhoto(el: HTMLElement | null, i: number) {
         {{ t('stages.label') }}
       </h2>
 
-      <!-- Stage map (overview) -->
       <div class="stages__map" aria-hidden="true">
         <div ref="mapLineRef" class="stages__map-line" />
         <div

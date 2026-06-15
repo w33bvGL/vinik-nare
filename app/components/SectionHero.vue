@@ -2,31 +2,32 @@
 const { t } = useI18n()
 const config = useAppConfig()
 
+const heroRef  = ref<HTMLElement | null>(null)
 const dateRef  = ref<HTMLElement | null>(null)
 const vruleRef = ref<HTMLElement | null>(null)
 const namesRef = ref<HTMLElement | null>(null)
 const ctaRef   = ref<HTMLElement | null>(null)
 
 onMounted(() => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { $gsap } = useNuxtApp() as any
   if (!$gsap) return
 
-  const nameChildren = namesRef.value?.children
-  if (!nameChildren?.length) return
+  const tl = $gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-  $gsap.timeline({ defaults: { ease: 'power3.out' } })
-    .from(dateRef.value,  { opacity: 0, y: 28, duration: 1 }, 0.2)
+  tl.from(dateRef.value, { opacity: 0, y: 28, duration: 1 }, 0.2)
     .from(vruleRef.value, { scaleY: 0, transformOrigin: 'top center', duration: 0.7, ease: 'power2.out' }, 0.75)
-    .from(nameChildren,   { opacity: 0, y: 28, duration: 0.9, stagger: 0.12 }, 0.9)
-    .from(ctaRef.value,   { opacity: 0, y: 20, duration: 0.7 }, 1.55)
+    .from(namesRef.value?.children ?? [], { opacity: 0, y: 28, duration: 0.9, stagger: 0.12 }, 0.9)
+    .from(ctaRef.value, { opacity: 0, y: 20, duration: 0.7 }, 1.55)
 })
 </script>
 
 <template>
-  <section class="hero" aria-label="Invitation">
+  <section ref="heroRef" class="hero" aria-label="Invitation">
     <div class="container hero__container">
 
       <div class="hero__layout">
+        <!-- Date numerals -->
         <div ref="dateRef" class="hero__date" aria-label="Wedding date">
           <span class="hero__num">{{ config.wedding.dateDay }}</span>
           <span class="hero__num-dot" aria-hidden="true" />
@@ -35,8 +36,10 @@ onMounted(() => {
           <span class="hero__num">{{ config.wedding.dateYear }}</span>
         </div>
 
+        <!-- Vertical rule (desktop) -->
         <div ref="vruleRef" class="hero__vrule" aria-hidden="true" />
 
+        <!-- Names -->
         <div ref="namesRef" class="hero__names">
           <span class="hero__name">{{ t('names.groom') }}</span>
           <span class="hero__amp" aria-hidden="true">&amp;</span>
@@ -44,10 +47,22 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- CTA -->
       <div ref="ctaRef" class="hero__cta">
         <UiDivider variant="short" />
-        <WaxSeal :size="80" interactive />
-        <p class="hero__hint">{{ t('hero.scrollHint') }}</p>
+
+        <div v-if="config.wedding.heroPhoto" class="hero__photo-wrap" aria-hidden="true">
+          <img
+            :src="config.wedding.heroPhoto"
+            alt=""
+            class="hero__photo photo"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </div>
+
+        <span class="hero__scroll-line" aria-hidden="true" />
       </div>
 
     </div>
@@ -72,11 +87,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-6);
-}
-
-@media (min-width: 768px) {
-  .hero__container { gap: var(--space-8); }
+  gap: var(--space-8);
 }
 
 /* ── Layout ── */
@@ -84,7 +95,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   width: 100%;
 }
 
@@ -122,13 +133,13 @@ onMounted(() => {
   line-height: var(--leading-tight);
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(2rem, 9vw, 6.5rem);
+  font-size: clamp(2.5rem, 10vw, 6.5rem);
 }
 
 .hero__num-dot {
   display: block;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--color-divider);
   flex-shrink: 0;
@@ -139,7 +150,9 @@ onMounted(() => {
 }
 
 /* ── Vertical rule ── */
-.hero__vrule { display: none; }
+.hero__vrule {
+  display: none;
+}
 
 @media (min-width: 768px) {
   .hero__vrule {
@@ -170,14 +183,14 @@ onMounted(() => {
   line-height: var(--leading-snug);
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(2.25rem, 7.5vw, 5rem);
+  font-size: clamp(2.5rem, 8vw, 5rem);
 }
 
 .hero__amp {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(1.25rem, 3.5vw, 2.5rem);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   color: var(--squirrel-500);
   line-height: var(--leading-loose);
   margin-block: -0.15em;
@@ -189,14 +202,47 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   gap: var(--space-4);
+  width: 100%;
 }
 
-.hero__hint {
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  font-weight: 300;
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
+/* ── Photo ── */
+.hero__photo-wrap {
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero__photo-wrap {
+    max-width: 380px;
+    aspect-ratio: 2 / 3;
+  }
+}
+
+.hero__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform var(--dur-lux) var(--ease-lux);
+}
+
+/* ── Scroll line ── */
+.hero__scroll-line {
+  display: block;
+  width: 0.5px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--color-divider), transparent);
+  animation: scroll-drop 2.4s var(--ease-lux) infinite;
+  transform-origin: top center;
+}
+
+@keyframes scroll-drop {
+  0%   { transform: scaleY(0); opacity: 0; }
+  30%  { opacity: 1; }
+  80%  { transform: scaleY(1); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 0; }
 }
 </style>
