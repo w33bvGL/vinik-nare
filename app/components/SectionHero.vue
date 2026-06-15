@@ -2,17 +2,13 @@
 const { t } = useI18n()
 const config = useAppConfig()
 
-const heroRef  = ref<HTMLElement | null>(null)
-const dateRef  = ref<HTMLElement | null>(null)
-const vruleRef = ref<HTMLElement | null>(null)
-const namesRef = ref<HTMLElement | null>(null)
-const ctaRef   = ref<HTMLElement | null>(null)
-
-const heroBg = computed(() =>
-  config.wedding.heroPhoto
-    ? `url('${config.wedding.heroPhoto}')`
-    : undefined,
-)
+const heroRef     = ref<HTMLElement | null>(null)
+const dateRef     = ref<HTMLElement | null>(null)
+const vruleRef    = ref<HTMLElement | null>(null)
+const namesRef    = ref<HTMLElement | null>(null)
+const photoWrapRef = ref<HTMLElement | null>(null)
+const photoImgRef  = ref<HTMLImageElement | null>(null)
+const ctaRef      = ref<HTMLElement | null>(null)
 
 onMounted(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,69 +17,106 @@ onMounted(() => {
 
   const tl = $gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-  tl.from(dateRef.value, { opacity: 0, y: 28, duration: 1 }, 0.2)
-    .from(vruleRef.value, { scaleY: 0, transformOrigin: 'top center', duration: 0.7, ease: 'power2.out' }, 0.75)
-    .from(namesRef.value?.children ?? [], { opacity: 0, y: 28, duration: 0.9, stagger: 0.12 }, 0.9)
-    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 20, duration: 0.7, stagger: 0.1 }, 1.55)
+  // Photo: curtain reveal + subtle zoom-out, fires first (it's big and sets the mood)
+  if (photoWrapRef.value && photoImgRef.value) {
+    tl.fromTo(
+        photoWrapRef.value,
+        { clipPath: 'inset(0 0 100% 0)' },
+        { clipPath: 'inset(0 0 0% 0)', duration: 1.5, ease: 'expo.inOut' },
+        0.1,
+      )
+      .from(photoImgRef.value, { scale: 1.1, duration: 2.4, ease: 'power2.out' }, 0.1)
+  }
+
+  // Typography — staggered reveal
+  tl.from(dateRef.value, { opacity: 0, x: -28, duration: 0.9 }, 0.45)
+    .from(vruleRef.value, { scaleY: 0, transformOrigin: 'top center', duration: 0.7, ease: 'power2.inOut' }, 0.8)
+    .from(namesRef.value?.children ?? [], { opacity: 0, y: 40, duration: 1.1, stagger: 0.15, ease: 'power4.out' }, 0.85)
+    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.5)
+
+  // Parallax scroll on photo image
+  if (photoImgRef.value) {
+    $gsap.to(photoImgRef.value, {
+      yPercent: -14,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroRef.value,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+      },
+    })
+  }
 })
 </script>
 
 <template>
-  <section
-    ref="heroRef"
-    class="hero"
-    :class="{ 'hero--photo': config.wedding.heroPhoto }"
-    :style="heroBg ? { backgroundImage: heroBg } : undefined"
-    aria-label="Invitation"
-  >
-    <div v-if="config.wedding.heroPhoto" class="hero__overlay" aria-hidden="true" />
-
+  <section ref="heroRef" class="hero" aria-label="Invitation">
     <div class="container hero__container">
+      <div class="hero__split">
 
-      <div class="hero__layout">
-        <!-- Date numerals -->
-        <div ref="dateRef" class="hero__date" aria-label="Wedding date">
-          <span class="hero__num">{{ config.wedding.dateDay }}</span>
-          <span class="hero__num-dot" aria-hidden="true" />
-          <span class="hero__num">{{ config.wedding.dateMonth }}</span>
-          <span class="hero__num-dot" aria-hidden="true" />
-          <span class="hero__num">{{ config.wedding.dateYear }}</span>
+        <!-- ── Text column ── -->
+        <div class="hero__content">
+
+          <div class="hero__layout">
+            <!-- Date numerals -->
+            <div ref="dateRef" class="hero__date" aria-label="Wedding date">
+              <span class="hero__num">{{ config.wedding.dateDay }}</span>
+              <span class="hero__num-dot" aria-hidden="true" />
+              <span class="hero__num">{{ config.wedding.dateMonth }}</span>
+              <span class="hero__num-dot" aria-hidden="true" />
+              <span class="hero__num">{{ config.wedding.dateYear }}</span>
+            </div>
+
+            <!-- Vertical rule (desktop) -->
+            <div ref="vruleRef" class="hero__vrule" aria-hidden="true" />
+
+            <!-- Names -->
+            <div ref="namesRef" class="hero__names">
+              <span class="hero__name">{{ t('names.groom') }}</span>
+              <span class="hero__amp" aria-hidden="true">&amp;</span>
+              <span class="hero__name">{{ t('names.bride') }}</span>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div ref="ctaRef" class="hero__cta">
+            <UiDivider variant="short" />
+            <div class="hero__actions">
+              <UiButton as="a" href="#rsvp" variant="filled">{{ t('hero.rsvpCta') }}</UiButton>
+              <UiButton as="a" href="#program" variant="outline">{{ t('hero.programCta') }}</UiButton>
+            </div>
+            <span class="hero__scroll-line" aria-hidden="true" />
+          </div>
+
         </div>
 
-        <!-- Vertical rule (desktop) -->
-        <div ref="vruleRef" class="hero__vrule" aria-hidden="true" />
-
-        <!-- Names -->
-        <div ref="namesRef" class="hero__names">
-          <span class="hero__name">{{ t('names.groom') }}</span>
-          <span class="hero__amp" aria-hidden="true">&amp;</span>
-          <span class="hero__name">{{ t('names.bride') }}</span>
+        <!-- ── Photo column ── -->
+        <div
+          v-if="config.wedding.heroPhoto"
+          ref="photoWrapRef"
+          class="hero__photo-wrap"
+          aria-hidden="true"
+        >
+          <img
+            ref="photoImgRef"
+            :src="config.wedding.heroPhoto"
+            alt=""
+            class="hero__photo photo"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
         </div>
+
       </div>
-
-      <!-- CTA -->
-      <div ref="ctaRef" class="hero__cta">
-        <UiDivider variant="short" />
-
-        <div class="hero__actions">
-          <UiButton as="a" href="#rsvp" variant="filled">
-            {{ t('hero.rsvpCta') }}
-          </UiButton>
-          <UiButton as="a" href="#program" variant="outline">
-            {{ t('hero.programCta') }}
-          </UiButton>
-        </div>
-
-        <span class="hero__scroll-line" aria-hidden="true" />
-      </div>
-
     </div>
   </section>
 </template>
 
 <style scoped>
+/* ── Section ── */
 .hero {
-  position: relative;
   min-height: 100svh;
   display: flex;
   align-items: center;
@@ -92,43 +125,50 @@ onMounted(() => {
   padding-bottom: max(var(--space-8), env(safe-area-inset-bottom, var(--space-8)));
 }
 
-.hero--photo {
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-}
-
 @media (min-width: 768px) {
-  .hero { padding-block: var(--space-16); }
-}
-
-/* Overlay — keeps dark text legible over photo */
-.hero__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    160deg,
-    rgba(251, 251, 248, 0.93) 0%,
-    rgba(251, 251, 248, 0.78) 40%,
-    rgba(251, 251, 248, 0.88) 100%
-  );
-  pointer-events: none;
+  .hero { padding-block: var(--space-12); }
 }
 
 .hero__container {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* ── Split: text left · photo right ── */
+.hero__split {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-8);
+  width: 100%;
 }
 
-/* ── Layout ── */
+@media (min-width: 768px) {
+  .hero__split {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+  }
+}
+
+/* ── Text column ── */
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Title row: date · rule · names ── */
 .hero__layout {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   width: 100%;
 }
 
@@ -137,11 +177,11 @@ onMounted(() => {
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
-    gap: var(--space-8);
+    gap: var(--space-6);
   }
 }
 
-/* ── Date column ── */
+/* ── Date ── */
 .hero__date {
   display: flex;
   flex-direction: row;
@@ -166,7 +206,11 @@ onMounted(() => {
   line-height: var(--leading-tight);
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(3.5rem, 12vw, 6.5rem);
+  font-size: clamp(3.5rem, 12vw, 5.5rem);
+}
+
+@media (min-width: 768px) {
+  .hero__num { font-size: clamp(2.5rem, 5.5vw, 4.5rem); }
 }
 
 .hero__num-dot {
@@ -183,9 +227,7 @@ onMounted(() => {
 }
 
 /* ── Vertical rule ── */
-.hero__vrule {
-  display: none;
-}
+.hero__vrule { display: none; }
 
 @media (min-width: 768px) {
   .hero__vrule {
@@ -216,7 +258,11 @@ onMounted(() => {
   line-height: var(--leading-snug);
   color: var(--color-text-heading);
   letter-spacing: var(--tracking-tighter);
-  font-size: clamp(3.25rem, 10vw, 5.5rem);
+  font-size: clamp(3.25rem, 10vw, 5rem);
+}
+
+@media (min-width: 768px) {
+  .hero__name { font-size: clamp(3rem, 5vw, 4.5rem); }
 }
 
 .hero__amp {
@@ -238,17 +284,11 @@ onMounted(() => {
   width: 100%;
 }
 
-/* ── Action buttons ── */
 .hero__actions {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-2);
+  flex-wrap: wrap;
   justify-content: center;
-}
-
-@media (max-width: 480px) {
-  .hero__actions { flex-direction: column; width: 100%; }
-  .hero__actions :deep(.btn) { width: 100%; }
 }
 
 /* ── Scroll line ── */
@@ -266,5 +306,32 @@ onMounted(() => {
   30%  { opacity: 1; }
   80%  { transform: scaleY(1); opacity: 0; }
   100% { transform: scaleY(1); opacity: 0; }
+}
+
+/* ── Photo ── */
+.hero__photo-wrap {
+  overflow: hidden;
+  flex-shrink: 0;
+  /* mobile: portrait, constrained */
+  width: min(220px, 62vw);
+  aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 768px) {
+  .hero__photo-wrap {
+    width: 248px;
+    /* let height be determined by viewport; cap at half the section */
+    height: min(calc(100svh - var(--space-12) * 2), 480px);
+    aspect-ratio: unset;
+  }
+}
+
+.hero__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  will-change: transform;
 }
 </style>
