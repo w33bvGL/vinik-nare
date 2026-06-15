@@ -39,7 +39,6 @@ async function submit() {
   }
 }
 
-// GSAP reveal on mount
 const rootRef = ref<HTMLElement | null>(null)
 onMounted(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,33 +74,43 @@ onMounted(() => {
           <!-- Form -->
           <form v-else class="rsvp__form" novalidate @submit.prevent="submit">
 
-            <p id="rsvp-heading" data-gsap class="rsvp__label">
-              {{ t('rsvp.label') }}
-            </p>
-
-            <p data-gsap class="rsvp__meta">
-              {{ t('rsvp.meta', { deadline: t('date.rsvpDeadline') }) }}
-            </p>
+            <div class="rsvp__header" data-gsap>
+              <p id="rsvp-heading" class="rsvp__label">
+                {{ t('rsvp.label') }}
+              </p>
+              <span class="rsvp__ornament" aria-hidden="true" />
+              <p class="rsvp__meta">
+                {{ t('rsvp.meta', { deadline: t('date.rsvpDeadline') }) }}
+              </p>
+            </div>
 
             <!-- Attendance pills -->
-            <div data-gsap class="rsvp__pills" role="group" :aria-label="t('rsvp.label')">
+            <div data-gsap class="rsvp__attend" role="group" :aria-label="t('rsvp.label')">
               <button
                 type="button"
                 class="rsvp__pill"
                 :class="{ 'rsvp__pill--on': attendance === 'yes' }"
                 @click="attendance = 'yes'"
-              >{{ t('rsvp.yes') }}</button>
+              >
+                <span class="rsvp__pill-check" aria-hidden="true" />
+                {{ t('rsvp.yes') }}
+              </button>
               <button
                 type="button"
                 class="rsvp__pill"
                 :class="{ 'rsvp__pill--on': attendance === 'no' }"
                 @click="attendance = 'no'"
-              >{{ t('rsvp.no') }}</button>
+              >
+                <span class="rsvp__pill-check" aria-hidden="true" />
+                {{ t('rsvp.no') }}
+              </button>
             </div>
 
             <!-- Name -->
             <div data-gsap class="rsvp__field">
+              <label class="rsvp__field-label" for="rsvp-name">{{ t('rsvp.nameLabel') }}</label>
               <input
+                id="rsvp-name"
                 v-model="name"
                 class="rsvp__input"
                 type="text"
@@ -116,7 +125,9 @@ onMounted(() => {
             <!-- Guest count (when attending) -->
             <Transition name="slide">
               <div v-if="attendance === 'yes'" class="rsvp__field">
+                <label class="rsvp__field-label" for="rsvp-guests">{{ t('rsvp.guestsLabel') }}</label>
                 <input
+                  id="rsvp-guests"
                   v-model.number="guests"
                   class="rsvp__input"
                   type="number"
@@ -130,7 +141,9 @@ onMounted(() => {
 
             <!-- Wish -->
             <div data-gsap class="rsvp__field">
+              <label class="rsvp__field-label" for="rsvp-wish">{{ t('rsvp.wishLabel') }}</label>
               <textarea
+                id="rsvp-wish"
                 v-model="wish"
                 class="rsvp__input rsvp__textarea"
                 :placeholder="t('rsvp.wishPlaceholder')"
@@ -168,10 +181,19 @@ onMounted(() => {
 
 <style scoped>
 .rsvp__body {
-  padding-block: var(--space-8);
   max-width: 440px;
   margin-inline: auto;
+  margin-block: var(--space-8);
+  border: 0.5px solid var(--color-divider);
+  padding: var(--space-6) var(--space-4);
 }
+
+@media (min-width: 480px) {
+  .rsvp__body { padding: var(--space-6); }
+}
+
+/* Header block */
+.rsvp__header { text-align: center; margin-bottom: var(--space-6); }
 
 .rsvp__label {
   font-family: var(--font-sc);
@@ -179,8 +201,15 @@ onMounted(() => {
   font-weight: 300;
   letter-spacing: var(--tracking-widest);
   color: var(--color-text-secondary);
-  text-align: center;
   margin-bottom: var(--space-2);
+}
+
+.rsvp__ornament {
+  display: block;
+  width: 32px;
+  height: 0.5px;
+  background: var(--color-divider);
+  margin: var(--space-2) auto;
 }
 
 .rsvp__meta {
@@ -189,8 +218,6 @@ onMounted(() => {
   font-weight: 300;
   color: var(--color-text-secondary);
   letter-spacing: var(--tracking-wide);
-  text-align: center;
-  margin-bottom: var(--space-6);
 }
 
 .rsvp__form {
@@ -199,17 +226,19 @@ onMounted(() => {
   gap: var(--space-4);
 }
 
-/* Pills */
-.rsvp__pills {
+/* Attendance pills */
+.rsvp__attend {
   display: flex;
   gap: var(--space-2);
-  justify-content: center;
 }
 
 .rsvp__pill {
   flex: 1;
-  max-width: 160px;
-  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: 14px 20px;
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 400;
@@ -217,11 +246,12 @@ onMounted(() => {
   text-transform: uppercase;
   color: var(--color-accent);
   background: transparent;
-  border: 1px solid var(--color-accent);
+  border: 0.5px solid var(--color-divider);
   cursor: pointer;
   transition:
     background var(--dur-default) var(--ease-gentle),
-    color var(--dur-default) var(--ease-gentle);
+    color var(--dur-default) var(--ease-gentle),
+    border-color var(--dur-default) var(--ease-gentle);
 }
 .rsvp__pill:hover { background: var(--color-hover-fill); }
 .rsvp__pill--on {
@@ -234,19 +264,39 @@ onMounted(() => {
   outline-offset: 3px;
 }
 
-/* Inputs */
-.rsvp__field { display: flex; flex-direction: column; }
+.rsvp__pill-check {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity var(--dur-default) var(--ease-gentle);
+}
+.rsvp__pill--on .rsvp__pill-check { opacity: 1; }
+
+/* Field labels + inputs */
+.rsvp__field { display: flex; flex-direction: column; gap: 6px; }
+
+.rsvp__field-label {
+  font-family: var(--font-sc);
+  font-size: var(--text-xs);
+  font-weight: 300;
+  letter-spacing: var(--tracking-widest);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
 
 .rsvp__input {
   width: 100%;
-  padding: 12px 0;
+  padding: 10px 0;
   font-family: var(--font-sans);
   font-size: var(--text-base);
   font-weight: 300;
   color: var(--color-text);
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--color-divider);
+  border-bottom: 0.5px solid var(--color-divider);
   outline: none;
   letter-spacing: var(--tracking-wide);
   resize: none;
@@ -255,8 +305,8 @@ onMounted(() => {
 }
 .rsvp__input::-webkit-inner-spin-button,
 .rsvp__input::-webkit-outer-spin-button { -webkit-appearance: none; }
-.rsvp__input::placeholder { color: var(--color-text-secondary); }
-.rsvp__input:focus { border-bottom-color: var(--color-accent); }
+.rsvp__input::placeholder { color: var(--color-text-disabled); }
+.rsvp__input:focus { border-bottom-color: var(--color-text-heading); }
 .rsvp__input:focus::placeholder { opacity: 0; transition: opacity var(--dur-fast) ease; }
 .rsvp__input:disabled { opacity: 0.5; cursor: not-allowed; }
 .rsvp__textarea { line-height: var(--leading-relaxed); }
@@ -269,7 +319,11 @@ onMounted(() => {
   letter-spacing: var(--tracking-wide);
 }
 
-.rsvp__actions { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
+.rsvp__actions {
+  display: flex;
+  margin-top: var(--space-2);
+}
+.rsvp__actions :deep(.btn) { flex: 1; }
 
 /* Success */
 .rsvp__success {

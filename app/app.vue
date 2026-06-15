@@ -8,7 +8,7 @@ useHead({
 </script>
 
 <template>
-  <main>
+  <main class="page-rail">
     <SectionHero />
     <SectionGreeting />
     <SectionCountdown />
@@ -19,3 +19,13 @@ useHead({
     <SectionFooter />
   </main>
 </template>
+
+<style scoped>
+.page-rail {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  border-left: 0.5px solid var(--color-divider);
+  border-right: 0.5px solid var(--color-divider);
+  min-height: 100dvh;
+}
+</style>
