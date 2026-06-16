@@ -114,14 +114,13 @@ onMounted(() => {
   object-fit: cover;
 }
 
-/* Слой для прозрачности (затемнения) */
 .hero__overlay-dark {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.25); /* Легкое затемнение */
+  background: rgba(0, 0, 0, 0.25);
   z-index: 1;
 }
 
@@ -172,11 +171,10 @@ onMounted(() => {
 
 .hero__actions {
   display: flex;
-  flex-wrap: wrap; /* Кнопки будут переноситься на новую строку при нехватке места */
+  flex-wrap: wrap;
   gap: var(--space-4);
 }
 
-/* Адаптив */
 @media (max-width: 768px) {
   .hero { flex-direction: column; }
   .hero__content {
