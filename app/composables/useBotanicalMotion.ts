@@ -103,7 +103,6 @@ export function useBotanicalMotion(
           const dir = i % 2 ? 1 : -1
           $gsap.to(leaf, {
             rotation: `+=${dir * (6 + (i % 4) * 3)}`,
-            yPercent: dir * 4,
             ease: 'none',
             scrollTrigger: { trigger, start: 'top bottom', end: 'bottom top', scrub: lag },
           })

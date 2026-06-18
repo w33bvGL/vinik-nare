@@ -9,13 +9,6 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/i18n', 'nuxt-schema-org'],
 
-  // Botanical pieces live in ~/components/botanical but keep their bare names
-  // (<Botanical>, <BotanicalField>…) rather than being path-prefixed.
-  components: [
-    { path: '~/components/botanical', pathPrefix: false },
-    '~/components',
-  ],
-
   css: [
     '~/assets/css/tokens.css',
     '~/assets/css/main.css',

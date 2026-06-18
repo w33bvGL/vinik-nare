@@ -149,6 +149,8 @@ onUnmounted(() => ctx?.revert())
 .hero__date {
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 .hero__num {
@@ -208,7 +210,7 @@ onUnmounted(() => ctx?.revert())
 .hero__foliage {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
 }
 

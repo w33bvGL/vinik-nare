@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { buildSprigs, VIEW, type BotanicalVariant } from './geometry'
+import type { BotanicalVariant } from '~/utils/botanical'
 import { useBotanicalMotion, type BotanicalMotionOptions } from '~/composables/useBotanicalMotion'
 
 const props = withDefaults(defineProps<{
