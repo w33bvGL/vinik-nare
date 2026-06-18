@@ -3,6 +3,7 @@
     <slot />
     <SectionFooter />
   </div>
+  <GrainOverlay />
 </template>
 
 <style scoped>

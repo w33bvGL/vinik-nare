@@ -59,19 +59,6 @@ body {
   display: block;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23g)'/></svg>");
-  background-size: 200px 200px;
-  opacity: 0.09;
-  mix-blend-mode: overlay;
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
