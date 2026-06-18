@@ -20,15 +20,15 @@ onMounted(() => {
     tl.fromTo(
       photoWrapRef.value,
       { clipPath: 'inset(0 0 100% 0)' },
-      { clipPath: 'inset(0 0 0% 0)', duration: 1.6, ease: 'expo.inOut' },
+      { clipPath: 'inset(0 0 0% 0)', duration: 1.1, ease: 'expo.out' },
       0.0,
     )
-      .from(photoImgRef.value, { scale: 1.15, duration: 2.6, ease: 'power2.out' }, 0.0)
+      .from(photoImgRef.value, { scale: 1.12, duration: 2.2, ease: 'power2.out' }, 0.0)
   }
 
-  tl.from(dateRef.value,  { opacity: 0, x: -40, duration: 0.9 }, 0.5)
-    .from(namesRef.value, { opacity: 0, y: 30,  duration: 1.1 }, 0.8)
-    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.2)
+  tl.from(dateRef.value,  { opacity: 0, x: -40, duration: 0.9 }, 0.75)
+    .from(namesRef.value, { opacity: 0, y: 30,  duration: 1.0 }, 1.0)
+    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.35)
 
   if (photoImgRef.value) {
     $gsap.to(photoImgRef.value, {
@@ -174,9 +174,9 @@ onMounted(() => {
 
 .hero__photo {
   width: 100%;
-  height: 110%; /* запас для parallax */
+  height: 130%; /* запас для parallax: 12% × 130% = 15.6% движения, дно не обнажается */
   object-fit: cover;
-  object-position: center top;
+  object-position: center 20%;
   display: block;
   filter: saturate(0.28) sepia(0.10) brightness(0.97);
 }
