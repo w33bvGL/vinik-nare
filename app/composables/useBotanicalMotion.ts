@@ -44,10 +44,13 @@ export function useBotanicalMotion(
       const leaves = svg.querySelectorAll<SVGGElement>('.botanical__leaf')
       const accents = svg.querySelectorAll<SVGElement>('.botanical__berry, .botanical__vein')
 
-      // Capture SVG-space centers via getBBox() before GSAP touches any transforms.
-      // transformOrigin: 'center center' resolves against the SVG viewport, not the
-      // element — that is what caused leaves to fly off. svgOrigin uses SVG units.
+      // Pivot every leaf at its stem-attachment point so it hinges off the branch
+      // (grown leaves carry `data-anchor`); fall back to the bbox centre for the
+      // rose's static leaves. svgOrigin uses SVG units — transformOrigin 'center'
+      // resolves against the viewport, which is what made leaves fly off.
       const leafOrigins = Array.from(leaves).map(leaf => {
+        const anchor = leaf.getAttribute('data-anchor')
+        if (anchor) return anchor
         const b = leaf.getBBox()
         return `${(b.x + b.width / 2).toFixed(2)} ${(b.y + b.height / 2).toFixed(2)}`
       })

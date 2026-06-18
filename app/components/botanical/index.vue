@@ -62,7 +62,12 @@ if (props.animate) {
     <template v-if="variant !== 'rose'">
       <g v-for="(s, si) in sprigs" :key="si">
         <path v-if="s.stem" :d="s.stem" pathLength="1" class="botanical__stem" />
-        <g v-for="(leaf, li) in s.leaves" :key="li" class="botanical__leaf">
+        <g
+            v-for="(leaf, li) in s.leaves"
+            :key="li"
+            class="botanical__leaf"
+            :data-anchor="`${leaf.anchor[0].toFixed(1)} ${leaf.anchor[1].toFixed(1)}`"
+        >
           <ellipse
               :cx="leaf.cx.toFixed(1)"
               :cy="leaf.cy.toFixed(1)"

@@ -1,7 +1,7 @@
 export type BotanicalVariant = 'sprig' | 'spray' | 'branch' | 'vine' | 'arch' | 'rose'
 
 export interface Curve { p0: [number, number]; p1: [number, number]; p2: [number, number]; p3: [number, number] }
-export interface Leaf { cx: number; cy: number; rx: number; ry: number; angle: number; vein: string }
+export interface Leaf { cx: number; cy: number; rx: number; ry: number; angle: number; vein: string; anchor: [number, number] }
 export interface Sprig { stem: string; leaves: Leaf[]; berries?: [number, number, number][] }
 
 export const VIEW = 200
@@ -38,21 +38,23 @@ export function growLeaves(c: Curve, opts: GrowOpts): Leaf[] {
     const [px, py] = cubic(c, t)
     const ang = tangentAngle(c, t)
     const side = i % 2 === 0 ? 1 : -1
-    const rad = (ang + 90 * side) * (Math.PI / 180)
     // taper: leaves shrink toward the growing tip
     const scale = 0.55 + 0.45 * (1 - t)
     const lrx = rx * scale, lry = ry * scale
-    const off = (lry + 2) * 0.92
-    const cx = px + Math.cos(rad) * off
-    const cy = py + Math.sin(rad) * off
-    const leafAngle = ang + spread * side
-    // central vein along the leaf's long axis
+    // The blade grows out of the stem: its base sits ON the curve at (px, py)
+    // and the long axis sweeps outward by `spread`. Pushing the centre half a
+    // length along that axis keeps the inner tip anchored to the branch, so the
+    // leaf reads as attached instead of floating off.
+    const blade = ang + spread * side
+    const br = blade * (Math.PI / 180)
+    const ax = Math.cos(br), ay = Math.sin(br)
+    const cx = px + ax * lrx
+    const cy = py + ay * lrx
+    // central vein from the stem-anchored base toward the leaf tip
     const veinHalf = lrx * 0.82
-    const vr = leafAngle * (Math.PI / 180)
-    const vx = Math.cos(vr) * veinHalf, vy = Math.sin(vr) * veinHalf
     leaves.push({
-      cx, cy, rx: lrx, ry: lry, angle: leafAngle,
-      vein: `M ${(cx - vx).toFixed(1)} ${(cy - vy).toFixed(1)} L ${(cx + vx).toFixed(1)} ${(cy + vy).toFixed(1)}`,
+      cx, cy, rx: lrx, ry: lry, angle: blade, anchor: [px, py],
+      vein: `M ${(cx - ax * veinHalf).toFixed(1)} ${(cy - ay * veinHalf).toFixed(1)} L ${(cx + ax * veinHalf).toFixed(1)} ${(cy + ay * veinHalf).toFixed(1)}`,
     })
   }
   return leaves
