@@ -7,6 +7,13 @@ export default defineNuxtConfig({
     telegramChatId: '',
   },
 
+  site: {
+    url: 'https://vinik-nare.am',
+    name: 'Vinik & Nare',
+    description: 'Wedding invitation of Vinik and Nare',
+    defaultLocale: 'hy',
+  },
+
   modules: ['@nuxtjs/i18n', 'nuxt-schema-org'],
 
   css: [
@@ -23,7 +30,7 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'hy',
     langDir: 'locales/',
-    strategy: 'prefix_except_default',
+    strategy: 'prefix_and_default',
     lazy: true,
   },
 

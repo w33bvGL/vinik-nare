@@ -140,12 +140,6 @@ onUnmounted(() => ctx?.revert())
   will-change: transform;
 }
 
-@media (min-width: 769px) {
-  .hero__content {
-    border-right: 1px solid var(--color-divider);
-  }
-}
-
 .hero__date {
   display: flex;
   flex-direction: column;
