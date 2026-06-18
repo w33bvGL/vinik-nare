@@ -55,14 +55,6 @@
       "description": "Our happiest day together"
     }
   },
-  "gallery": {
-    "label": "Moments",
-    "heading": "Our moments",
-    "hint": "Tap to open",
-    "close": "Close",
-    "prev": "Previous",
-    "next": "Next"
-  },
   "program": {
     "label": "Day programme",
     "mapLink": "Open in Maps",
@@ -76,9 +68,6 @@
         "desc": "Festive dinner with family and friends"
       }
     }
-  },
-  "location": {
-    "label": "Venue"
   },
   "rsvp": {
     "label": "RSVP",

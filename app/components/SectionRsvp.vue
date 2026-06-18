@@ -80,7 +80,6 @@ onMounted(() => {
         <Transition name="fade" mode="out-in">
 
           <div v-if="isSuccess" class="rsvp__success" aria-live="polite">
-            <WaxSeal :size="64" class="rsvp__seal" />
             <p class="rsvp__success-heading">{{ t('rsvp.successHeading') }}</p>
             <p class="rsvp__success-text">{{ t('rsvp.successText') }}</p>
           </div>

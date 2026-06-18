@@ -12,7 +12,6 @@ const { t } = useI18n()
           {{ t('names.groom') }}<span class="footer__amp">&amp;</span>{{ t('names.bride') }}
         </p>
         <p class="footer__date">{{ t('footer.closingDate') }}</p>
-        <WaxSeal :size="40" interactive />
         <UiLangSwitcher />
       </div>
 
