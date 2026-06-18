@@ -1,0 +1,29 @@
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--squirrel-400) var(--squirrel-100);
+}
+
+/* Chromium / WebKit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--squirrel-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--squirrel-400);
+  border-radius: 3px;
+  transition: background var(--dur-default) var(--ease-gentle);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--squirrel-600);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--squirrel-100);
+}

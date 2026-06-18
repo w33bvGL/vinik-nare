@@ -1,24 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { buildSprigs, VIEW, type BotanicalVariant } from './geometry'
 import { useBotanicalMotion, type BotanicalMotionOptions } from '~/composables/useBotanicalMotion'
 
-/**
- * Botanical — hand-grown line-art sprigs & blooms.
- *
- * Decorative only (aria-hidden). Draws in `currentColor`, so colour and
- * opacity are controlled entirely from the parent via CSS. The geometry is
- * procedural & deterministic (see ./geometry.ts) so it hydrates cleanly; the
- * GSAP choreography lives in useBotanicalMotion and is opt-in via `animate`.
- */
 const props = withDefaults(defineProps<{
   variant?: BotanicalVariant
-  /** Mirror horizontally — handy for opposing corners. Don't combine with a
-   *  parent CSS transform on the same element (specificity clash). */
   flip?: boolean
-  /** Leaf density multiplier (1 = default). */
   density?: number
-  /** Master switch for the GSAP layers below. */
   animate?: boolean
   draw?: boolean
   reveal?: boolean

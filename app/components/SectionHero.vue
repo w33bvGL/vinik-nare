@@ -80,6 +80,13 @@ onUnmounted(() => ctx?.revert())
         <span class="hero__num">{{ config.wedding.dateYear }}</span>
       </div>
 
+      <div class="hero__foliage">
+        <Botanical
+            variant="vine" animate :delay="0.8" :density="1.5" :scrub="1.2"
+            class="hero__branch"
+        />
+      </div>
+
       <div ref="ctaRef" class="hero__cta">
         <UiDivider variant="short" />
         <p class="hero__description">{{ t('hero.description') }}</p>
@@ -99,20 +106,7 @@ onUnmounted(() => ctx?.revert())
       />
       <div class="hero__overlay-dark"></div>
 
-      <div class="hero__foliage">
-        <Botanical
-          variant="spray" animate :delay="0.7" :scrub="1.4"
-          class="hero__branch hero__branch--tr"
-        />
-        <Botanical
-          variant="spray" animate :delay="0.95" :density="0.8" :scrub="1.1"
-          class="hero__branch hero__branch--tl"
-        />
-        <Botanical
-          variant="vine" animate :delay="1.15" :density="0.85" :scrub="0.8"
-          class="hero__branch hero__branch--trail"
-        />
-      </div>
+
     </div>
 
     <div ref="namesRef" class="hero__names-overlay">
@@ -169,6 +163,7 @@ onUnmounted(() => ctx?.revert())
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  z-index: 1;
 }
 
 .hero__description {
@@ -210,47 +205,19 @@ onUnmounted(() => ctx?.revert())
   z-index: 1;
 }
 
-/* Foliage layer — sits above the photo + overlay, below the names. */
 .hero__foliage {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 0;
   pointer-events: none;
 }
 
 .hero__branch {
   position: absolute;
+  left: -150px;
+  color: var(--squirrel-300);
+  width: clamp(240px, 38vw, 540px);
   height: auto;
-  color: rgba(251, 251, 248, 0.72);
-  /* faint shadow lifts the pale line-work off the photo */
-  filter: drop-shadow(0 1px 6px rgba(14, 10, 7, 0.28));
-}
-
-/* Top-right corner: rotate 180° so the base sits in the corner and the
-   foliage drapes down-left into the frame. */
-.hero__branch--tr {
-  top: -1px;
-  right: -1px;
-  width: clamp(150px, 24vw, 250px);
-  transform: rotate(180deg);
-}
-
-/* Top-left accent: scaleY(-1) anchors the base in the corner, foliage
-   fanning down-right. Smaller + fainter so the corner reads as primary. */
-.hero__branch--tl {
-  top: -1px;
-  left: -1px;
-  width: clamp(110px, 17vw, 180px);
-  color: rgba(251, 251, 248, 0.55);
-  transform: scaleY(-1);
-}
-
-/* A vine trailing down the right edge for depth. */
-.hero__branch--trail {
-  top: 12%;
-  right: -2%;
-  width: clamp(90px, 14vw, 150px);
-  color: rgba(251, 251, 248, 0.5);
 }
 
 .hero__names-overlay {
@@ -288,7 +255,6 @@ onUnmounted(() => ctx?.revert())
     background-color: var(--squirrel-900);
   }
 
-  /* Фото — полный экран под контентом */
   .hero__photo-wrap {
     position: absolute;
     inset: 0;
@@ -302,7 +268,6 @@ onUnmounted(() => ctx?.revert())
     object-position: center center;
   }
 
-  /* Усиленный градиент для читаемости снизу */
   .hero__overlay-dark {
     background: linear-gradient(
       180deg,
@@ -313,7 +278,6 @@ onUnmounted(() => ctx?.revert())
     );
   }
 
-  /* Контент прижат к низу — поверх фото */
   .hero__content {
     position: relative;
     z-index: 2;
@@ -328,12 +292,12 @@ onUnmounted(() => ctx?.revert())
     gap: var(--space-3);
   }
 
-  /* Дата горизонтально, по центру */
   .hero__date {
     flex-direction: row;
     align-items: baseline;
     justify-content: center;
     gap: var(--space-2);
+    z-index: 3;
   }
 
   .hero__num {
@@ -352,7 +316,6 @@ onUnmounted(() => ctx?.revert())
     justify-content: center;
   }
 
-  /* Кнопки: инверт на тёмном фоне фото */
   :deep(.btn--filled) {
     background: rgba(255, 255, 255, 0.95);
     border-color: transparent;
@@ -364,13 +327,10 @@ onUnmounted(() => ctx?.revert())
     background: transparent;
   }
 
-  /* На мобиле фото — фон под текстом. Оставляем только верхние ветки,
-     помельче и потише, чтобы не спорить с именами; шлейф убираем. */
-  .hero__branch--tr { width: 120px; color: rgba(251, 251, 248, 0.5); }
-  .hero__branch--tl { width: 92px;  color: rgba(251, 251, 248, 0.4); }
-  .hero__branch--trail { display: none; }
+  .hero__branch {
+    width: clamp(150px, 46vw, 240px);
+  }
 
-  /* Имена — полная ширина на мобиле */
   .hero__names-overlay {
     left: 0;
     top: var(--space-6);

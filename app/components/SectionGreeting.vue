@@ -66,7 +66,6 @@ onMounted(() => {
   pointer-events: none;
 }
 
-/* Corner sprays frame the message, echoing the printed invitation */
 .greeting__spray {
   position: absolute;
   width: clamp(120px, 24vw, 220px);
@@ -75,7 +74,6 @@ onMounted(() => {
   opacity: 0.45;
   pointer-events: none;
 }
-/* base of each spray sits in its corner, foliage fanning toward the centre */
 .greeting__spray--tl { top: 0; left: 0; transform: scaleY(-1); }
 .greeting__spray--br { bottom: 0; right: 0; transform: scaleX(-1); }
 

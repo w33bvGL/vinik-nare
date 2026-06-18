@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/tokens.css',
     '~/assets/css/main.css',
+    '~/assets/css/scrollbar.css',
   ],
 
   i18n: {
