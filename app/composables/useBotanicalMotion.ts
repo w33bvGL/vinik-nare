@@ -44,6 +44,14 @@ export function useBotanicalMotion(
       const leaves = svg.querySelectorAll<SVGGElement>('.botanical__leaf')
       const accents = svg.querySelectorAll<SVGElement>('.botanical__berry, .botanical__vein')
 
+      // Capture SVG-space centers via getBBox() before GSAP touches any transforms.
+      // transformOrigin: 'center center' resolves against the SVG viewport, not the
+      // element — that is what caused leaves to fly off. svgOrigin uses SVG units.
+      const leafOrigins = Array.from(leaves).map(leaf => {
+        const b = leaf.getBBox()
+        return `${(b.x + b.width / 2).toFixed(2)} ${(b.y + b.height / 2).toFixed(2)}`
+      })
+
       if (reduce) {
         $gsap.set([...stems, ...leaves, ...accents], { opacity: 1, scale: 1, clearProps: 'strokeDashoffset' })
         return
@@ -66,7 +74,9 @@ export function useBotanicalMotion(
       }
 
       if (reveal && leaves.length) {
-        $gsap.set(leaves, { opacity: 0, scale: 0, transformOrigin: 'center center' })
+        leaves.forEach((leaf, i) => {
+          $gsap.set(leaf, { opacity: 0, scale: 0, svgOrigin: leafOrigins[i] })
+        })
         intro.to(leaves, {
           opacity: 1,
           scale: 1,
@@ -87,7 +97,7 @@ export function useBotanicalMotion(
           const dur = 2.6 + (i % 5) * 0.4
           $gsap.to(leaf, {
             rotation: i % 2 ? amp : -amp,
-            transformOrigin: 'center center',
+            svgOrigin: leafOrigins[i],
             duration: dur,
             ease: 'sine.inOut',
             repeat: -1,
@@ -103,6 +113,7 @@ export function useBotanicalMotion(
           const dir = i % 2 ? 1 : -1
           $gsap.to(leaf, {
             rotation: `+=${dir * (6 + (i % 4) * 3)}`,
+            svgOrigin: leafOrigins[i],
             ease: 'none',
             scrollTrigger: { trigger, start: 'top bottom', end: 'bottom top', scrub: lag },
           })
