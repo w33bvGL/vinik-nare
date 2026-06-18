@@ -43,7 +43,6 @@ onMounted(() => {
     })
   }
 
-  // При скролле панель теряет цвет фона → scrub возвращает его при скролле вверх
   if (contentRef.value && window.innerWidth > 768) {
     const bgTarget = getComputedStyle(document.body).backgroundColor
     $gsap.to(contentRef.value, {
@@ -215,7 +214,6 @@ onMounted(() => {
   text-shadow: 0 1px 12px rgba(14, 10, 7, 0.30);
 }
 
-/* ──────────────── Мобиль ──────────────── */
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
