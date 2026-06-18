@@ -9,7 +9,7 @@ const cardRefs    = ref<HTMLElement[]>([])
 const photoRefs   = ref<HTMLElement[]>([])
 
 const stages = computed(() =>
-  config.wedding.stages.map((s: { key: string; year: string; photo: string }) => ({
+  config.wedding.stages.map((s: { key: string; year: string; yearBadge?: string; photo: string }) => ({
     ...s,
     title: t(`stages.${s.key}.title`),
     description: t(`stages.${s.key}.description`),
@@ -137,6 +137,7 @@ function setPhoto(el: HTMLElement | null, i: number) {
           :key="stage.key"
           class="stages__map-node"
         >
+          <span class="stages__map-index">{{ String(i + 1).padStart(2, '0') }}</span>
           <div
             :ref="(el) => setMapDot(el as HTMLElement, i)"
             class="stages__map-dot"
@@ -169,7 +170,7 @@ function setPhoto(el: HTMLElement | null, i: number) {
 
           <!-- Content -->
           <div class="stages__content">
-            <span class="stages__year-badge">{{ stage.year }}</span>
+            <span class="stages__year-badge">{{ stage.yearBadge ?? stage.year }}</span>
             <h3 class="stages__title">{{ stage.title }}</h3>
             <p class="stages__desc">{{ stage.description }}</p>
           </div>
@@ -193,9 +194,10 @@ function setPhoto(el: HTMLElement | null, i: number) {
   padding-inline: var(--space-2);
 }
 
+/* index-label (~11px × 1.3 lh) + gap (8px) + half-dot (8px) = ~30px */
 .stages__map-line {
   position: absolute;
-  top: 8px; /* align with dot center */
+  top: 30px;
   left: calc(var(--space-2) + 8px);
   right: calc(var(--space-2) + 8px);
   height: 0.5px;
@@ -210,6 +212,16 @@ function setPhoto(el: HTMLElement | null, i: number) {
   gap: var(--space-1);
   position: relative;
   z-index: 1;
+}
+
+.stages__map-index {
+  font-family: var(--font-serif);
+  font-size: var(--text-xs);
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+  line-height: 1.3;
+  font-variant-numeric: lining-nums;
 }
 
 .stages__map-dot {
