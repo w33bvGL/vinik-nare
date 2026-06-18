@@ -265,26 +265,33 @@ onMounted(() => {
     background: transparent;
     padding: var(--space-6) var(--space-4) max(var(--space-6), env(safe-area-inset-bottom, var(--space-6)));
     justify-content: flex-end;
+    align-items: center;
+    text-align: center;
     gap: var(--space-3);
   }
 
-  /* Дата горизонтально — не занимает всю высоту */
+  /* Дата горизонтально, по центру */
   .hero__date {
     flex-direction: row;
     align-items: baseline;
+    justify-content: center;
     gap: var(--space-2);
   }
 
   .hero__num {
     color: rgba(255, 255, 255, 0.93);
-    font-size: clamp(2rem, 9vw, 3rem);
+    font-size: clamp(2.2rem, 10vw, 3.2rem);
     line-height: 1;
   }
 
   .hero__description {
     color: rgba(255, 255, 255, 0.70);
     max-width: 100%;
-    font-size: var(--text-sm);
+    font-size: var(--text-base);
+  }
+
+  .hero__actions {
+    justify-content: center;
   }
 
   /* Кнопки: инверт на тёмном фоне фото */
@@ -306,11 +313,11 @@ onMounted(() => {
   }
 
   .hero__name--white {
-    font-size: clamp(1.8rem, 9vw, 3.2rem);
+    font-size: clamp(2.4rem, 12vw, 4rem);
   }
 
   .hero__amp--white {
-    font-size: clamp(1rem, 4vw, 1.5rem);
+    font-size: clamp(1.3rem, 5.5vw, 2rem);
   }
 }
 </style>
