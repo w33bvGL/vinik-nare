@@ -2,11 +2,12 @@
 const { t } = useI18n()
 const config = useAppConfig()
 
-const sectionRef  = ref<HTMLElement | null>(null)
-const mapLineRef  = ref<HTMLElement | null>(null)
-const mapDotsRef  = ref<HTMLElement[]>([])
-const cardRefs    = ref<HTMLElement[]>([])
-const photoRefs   = ref<HTMLElement[]>([])
+const sectionRef   = ref<HTMLElement | null>(null)
+const timelineRef  = ref<HTMLElement | null>(null)
+const spineFillRef = ref<HTMLElement | null>(null)
+const cardRefs     = ref<HTMLElement[]>([])
+const photoRefs    = ref<HTMLElement[]>([])
+const dotRefs      = ref<HTMLElement[]>([])
 
 const stages = computed(() =>
   config.wedding.stages.map((s: { key: string; year: string; yearBadge?: string; photo: string }) => ({
@@ -16,110 +17,118 @@ const stages = computed(() =>
   })),
 )
 
+let mm: gsap.MatchMedia | null = null
+
 onMounted(() => {
   const { $gsap, $ScrollTrigger } = useNuxtApp() as any
-  if (!$gsap) return
+  if (!$gsap || !sectionRef.value) return
 
-  $gsap.from(sectionRef.value?.querySelector('.section-label'), {
-    opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
-    scrollTrigger: { trigger: sectionRef.value, start: 'top 80%', once: true },
-  })
+  // matchMedia scopes every tween + ScrollTrigger, gives reduced-motion users a
+  // static layout and lets mm.revert() tear it all down on unmount.
+  mm = $gsap.matchMedia()
 
-  // Stage map — line draws on scroll
-  $gsap.from(mapLineRef.value, {
-    scaleX: 0,
-    transformOrigin: 'left center',
-    ease: 'none',
-    scrollTrigger: {
-      trigger: sectionRef.value?.querySelector('.stages__map'),
-      start: 'top 75%',
-      end: 'bottom 60%',
-      scrub: 1,
+  mm.add(
+    {
+      motion:  '(prefers-reduced-motion: no-preference)',
+      desktop: '(min-width: 768px)',
     },
-  })
+    (ctx: gsap.Context) => {
+      const { motion, desktop } = ctx.conditions as Record<string, boolean>
+      const section = sectionRef.value!
 
-  if (mapDotsRef.value.length) {
-    $gsap.from(mapDotsRef.value, {
-      opacity: 0,
-      scale: 0,
-      transformOrigin: 'center',
-      duration: 0.5,
-      stagger: 0.15,
-      ease: 'back.out(1.7)',
-      scrollTrigger: {
-        trigger: sectionRef.value?.querySelector('.stages__map'),
-        start: 'top 75%',
-        once: true,
-      },
-    })
-  }
-
-  if (cardRefs.value.length) {
-    cardRefs.value.forEach((card, i) => {
-      const isEven = i % 2 !== 0
-      $gsap.from(card, {
-        opacity: 0,
-        x: isEven ? 40 : -40,
-        y: 30,
-        duration: 0.9,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 82%',
-          once: true,
-        },
+      $gsap.from(section.querySelector('.section-label'), {
+        opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
       })
-    })
-  }
 
-  // Photo parallax
-  if (photoRefs.value.length) {
-    photoRefs.value.forEach((photo) => {
-      $gsap.fromTo(
-        photo,
-        { y: -16 },
-        {
-          y: 16,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: photo.closest('.stages__card'),
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        },
-      )
-    })
-  }
+      // The spine fill grows from the first node to the last as the section
+      // scrolls — the visual "thread" that stitches the whole story together.
+      if (spineFillRef.value) {
+        if (motion) {
+          $gsap.fromTo(spineFillRef.value,
+            { scaleY: 0 },
+            {
+              scaleY: 1, transformOrigin: 'top center', ease: 'none',
+              scrollTrigger: {
+                trigger: timelineRef.value,
+                start: 'top 60%', end: 'bottom 60%', scrub: 1,
+              },
+            },
+          )
+        } else {
+          $gsap.set(spineFillRef.value, { scaleY: 1, transformOrigin: 'top center' })
+        }
+      }
 
-  cardRefs.value.forEach((card, i) => {
-    $ScrollTrigger.create({
-      trigger: card,
-      start: 'top 55%',
-      end: 'bottom 55%',
-      onEnter: () => activateMapDot(i),
-      onEnterBack: () => activateMapDot(i),
-    })
-  })
+      cardRefs.value.forEach((item, i) => {
+        const card  = item.querySelector('.stages__card')
+        const photo = photoRefs.value[i]
+        const dot   = dotRefs.value[i]
+        // Cards drift in from their own side of the spine; mobile slides up only.
+        const fromX = desktop ? (i % 2 ? 56 : -56) : 0
+
+        // Resting zoom keeps the scrub parallax from ever exposing the frame edge.
+        if (photo && motion) $gsap.set(photo, { scale: 1.15, transformOrigin: 'center center' })
+
+        const tl = $gsap.timeline({
+          defaults: { ease: 'power3.out' },
+          scrollTrigger: { trigger: item, start: 'top 82%', once: true },
+        })
+
+        tl.from(card, { opacity: 0, x: fromX, y: 36, duration: 0.9 }, 0)
+
+        if (photo && motion) {
+          tl.from(photo, {
+            scale: 1.32,
+            clipPath: 'inset(0% 0% 100% 0%)',
+            duration: 1.1, ease: 'power2.out',
+          }, 0.1)
+        }
+
+        if (dot) tl.from(dot, { scale: 0, duration: 0.5, ease: 'back.out(2.2)' }, 0.2)
+
+        tl.from(item.querySelector('.stages__num'),
+          { opacity: 0, y: 24, duration: 0.6 }, 0.3)
+
+        tl.from(
+          item.querySelectorAll('.stages__year-badge, .stages__title, .stages__desc'),
+          { opacity: 0, y: 14, stagger: 0.09, duration: 0.5, ease: 'power2.out' }, 0.32,
+        )
+
+        // Gap-safe parallax: scale 1.15 leaves ~7.5% slack each side vs a ±6% drift.
+        if (photo && motion) {
+          $gsap.fromTo(photo,
+            { yPercent: -6 },
+            {
+              yPercent: 6, ease: 'none',
+              scrollTrigger: {
+                trigger: item,
+                start: 'top bottom', end: 'bottom top',
+                scrub: true, invalidateOnRefresh: true,
+              },
+            },
+          )
+        }
+
+        // Progressive node activation — lights up as the spine reaches each step.
+        if (dot) {
+          $ScrollTrigger.create({
+            trigger: item,
+            start: 'top 60%',
+            onEnter:     () => dot.classList.add('stages__dot--active'),
+            onLeaveBack: () => dot.classList.remove('stages__dot--active'),
+          })
+        }
+      })
+    },
+  )
 })
 
-function activateMapDot(index: number) {
-  mapDotsRef.value.forEach((dot, i) => {
-    dot.classList.toggle('stages__map-dot--active', i === index)
-  })
-}
+onUnmounted(() => mm?.revert())
 
-function setMapDot(el: HTMLElement | null, i: number) {
-  if (el) mapDotsRef.value[i] = el
-}
-
-function setCard(el: HTMLElement | null, i: number) {
-  if (el) cardRefs.value[i] = el
-}
-
-function setPhoto(el: HTMLElement | null, i: number) {
-  if (el) photoRefs.value[i] = el
-}
+function setCard(el: HTMLElement | null, i: number)  { if (el) cardRefs.value[i]  = el }
+function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i] = el }
+function setDot(el: HTMLElement | null, i: number)   { if (el) dotRefs.value[i]   = el }
 </script>
 
 <template>
@@ -130,52 +139,46 @@ function setPhoto(el: HTMLElement | null, i: number) {
         {{ t('stages.label') }}
       </UiSectionLabel>
 
-      <div class="stages__map" aria-hidden="true">
-        <div ref="mapLineRef" class="stages__map-line" />
-        <div
-          v-for="(stage, i) in stages"
-          :key="stage.key"
-          class="stages__map-node"
-        >
-          <span class="stages__map-index">{{ String(i + 1).padStart(2, '0') }}</span>
-          <div
-            :ref="(el) => setMapDot(el as HTMLElement, i)"
-            class="stages__map-dot"
-            :class="{ 'stages__map-dot--active': i === 0 }"
-          />
-          <span class="stages__map-year">{{ stage.year }}</span>
-        </div>
-      </div>
-
-      <ol class="stages__list" role="list">
+      <ol ref="timelineRef" class="stages__timeline" role="list">
         <li
           v-for="(stage, i) in stages"
           :key="stage.key"
           :ref="(el) => setCard(el as HTMLElement, i)"
-          class="stages__card"
-          :class="{ 'stages__card--even': i % 2 !== 0 }"
+          class="stages__item"
+          :class="{ 'stages__item--right': i % 2 !== 0 }"
         >
-
-          <div class="stages__photo-wrap">
-            <img
-              :ref="(el) => setPhoto(el as HTMLElement, i)"
-              :src="stage.photo"
-              :alt="stage.title"
-              class="stages__photo photo"
-              loading="lazy"
-              decoding="async"
+          <div class="stages__node" aria-hidden="true">
+            <span
+              :ref="(el) => setDot(el as HTMLElement, i)"
+              class="stages__dot"
+              :class="{ 'stages__dot--active': i === 0 }"
             />
-            <span class="stages__num">{{ String(i + 1).padStart(2, '0') }}</span>
+            <span class="stages__node-year">{{ stage.year }}</span>
           </div>
 
-          <!-- Content -->
-          <div class="stages__content">
-            <span class="stages__year-badge">{{ stage.yearBadge ?? stage.year }}</span>
-            <h3 class="stages__title">{{ stage.title }}</h3>
-            <p class="stages__desc">{{ stage.description }}</p>
-          </div>
+          <article class="stages__card">
+            <div class="stages__photo-wrap">
+              <div :ref="(el) => setPhoto(el as HTMLElement, i)" class="stages__photo-inner">
+                <img
+                  :src="stage.photo"
+                  :alt="stage.title"
+                  class="stages__photo photo"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <span class="stages__num">{{ String(i + 1).padStart(2, '0') }}</span>
+            </div>
 
+            <div class="stages__content">
+              <span class="stages__year-badge">{{ stage.yearBadge ?? stage.year }}</span>
+              <h3 class="stages__title">{{ stage.title }}</h3>
+              <p class="stages__desc">{{ stage.description }}</p>
+            </div>
+          </article>
         </li>
+
+        <div ref="spineFillRef" class="stages__spine-fill" aria-hidden="true" />
       </ol>
 
     </div>
@@ -185,120 +188,116 @@ function setPhoto(el: HTMLElement | null, i: number) {
 <style scoped>
 .stages { background-color: var(--color-surface); }
 
-.stages__map {
+/* ── Timeline ── */
+.stages__timeline {
+  --spine: 11px;                 /* x-anchor of the spine (mobile rail) */
+  list-style: none;
   position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--space-12);
-  padding-inline: var(--space-2);
+  flex-direction: column;
+  gap: clamp(var(--space-8), 9vw, var(--space-16));
+  margin-top: var(--space-8);
 }
 
-/* index-label (~11px × 1.3 lh) + gap (8px) + half-dot (8px) = ~30px */
-.stages__map-line {
+/* base spine track + the scroll-driven fill share the same geometry */
+.stages__timeline::before,
+.stages__spine-fill {
+  content: '';
   position: absolute;
-  top: 30px;
-  left: calc(var(--space-2) + 8px);
-  right: calc(var(--space-2) + 8px);
-  height: 0.5px;
-  background: var(--color-divider);
-  transform-origin: left center;
+  top: 7px;
+  bottom: 7px;
+  left: var(--spine);
+  width: 1px;
+  transform: translateX(-50%);
+}
+.stages__timeline::before { background: var(--color-divider); }
+.stages__spine-fill {
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top center;
+  background: linear-gradient(var(--squirrel-800), var(--squirrel-400));
+  z-index: 1;
 }
 
-.stages__map-node {
+/* ── Item ── */
+.stages__item {
+  position: relative;
+  padding-left: calc(var(--spine) + var(--space-4));
+}
+
+/* ── Node on the spine ── */
+.stages__node {
+  position: absolute;
+  top: 0;
+  left: var(--spine);
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
-  position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
-.stages__map-index {
-  font-family: var(--font-serif);
-  font-size: var(--text-xs);
-  font-weight: 300;
-  color: var(--color-text-secondary);
-  opacity: 0.5;
-  line-height: 1.3;
-  font-variant-numeric: lining-nums;
-}
-
-.stages__map-dot {
-  width: 16px;
-  height: 16px;
+.stages__dot {
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: var(--color-bg);
+  background: var(--color-surface);
   border: 1px solid var(--color-divider);
   transition:
     background var(--dur-default) var(--ease-gentle),
-    border-color var(--dur-default) var(--ease-gentle);
+    border-color var(--dur-default) var(--ease-gentle),
+    box-shadow var(--dur-default) var(--ease-gentle);
+}
+.stages__dot--active {
+  background: var(--squirrel-800);
+  border-color: var(--squirrel-800);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--squirrel-800) 12%, transparent);
 }
 
-.stages__map-dot--active {
-  background: var(--squirrel-900);
-  border-color: var(--squirrel-900);
-}
-
-.stages__map-year {
-  font-family: var(--font-sans);
+.stages__node-year {
+  display: none;                 /* surfaced on desktop, where there's room */
+  font-family: var(--font-sc);
   font-size: var(--text-xs);
   font-weight: 300;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: var(--tracking-widest);
   color: var(--color-text-secondary);
+  font-variant-numeric: lining-nums;
 }
 
-/* ── Card list ── */
-.stages__list {
-  list-style: none;
-  display: grid;
-  gap: var(--space-12);
-}
-
-@media (min-width: 768px) {
-  .stages__list {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-8) var(--space-8);
-  }
-}
-
+/* ── Card ── */
 .stages__card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-}
-
-/* Even cards shift down on desktop for stagger effect */
-@media (min-width: 768px) {
-  .stages__card--even {
-    margin-top: var(--space-8);
-  }
+  gap: var(--space-3);
 }
 
 /* ── Photo ── */
 .stages__photo-wrap {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 3 / 4;
-  background: var(--color-surface);
+  aspect-ratio: 4 / 5;
+  background: var(--color-bg);
 }
-
+/* Dedicated layer for the GSAP zoom/parallax so the CSS hover zoom on the <img>
+   never fights the scroll transform. */
+.stages__photo-inner { width: 100%; height: 100%; }
 .stages__photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  /* photo class from main.css applies the desaturate filter */
+  transition: transform var(--dur-lux) var(--ease-lux);
 }
+.stages__card:hover .stages__photo { transform: scale(1.04); }
 
 .stages__num {
   position: absolute;
-  bottom: var(--space-2);
+  bottom: var(--space-1);
   right: var(--space-2);
   font-family: var(--font-serif);
-  font-size: var(--text-4xl);
+  font-size: clamp(var(--text-4xl), 12vw, var(--text-5xl));
   font-weight: 300;
-  color: rgba(251, 251, 248, 0.25);
+  color: rgba(251, 251, 248, 0.26);
   line-height: 1;
   font-variant-numeric: lining-nums;
   pointer-events: none;
@@ -337,5 +336,19 @@ function setPhoto(el: HTMLElement | null, i: number) {
   line-height: var(--leading-relaxed);
   color: var(--color-text-secondary);
   letter-spacing: var(--tracking-wide);
+}
+
+/* ── Desktop: centred spine + alternating zigzag ── */
+@media (min-width: 768px) {
+  .stages__timeline { --spine: 50%; }
+
+  .stages__item { padding-left: 0; }
+
+  .stages__node { top: 6px; }
+  .stages__node-year { display: block; }
+
+  /* Each card claims one half, leaving a centred gutter for the node. */
+  .stages__card { width: calc(50% - var(--space-6)); }
+  .stages__item--right .stages__card { margin-left: auto; }
 }
 </style>
