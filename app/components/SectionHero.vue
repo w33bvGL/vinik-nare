@@ -3,6 +3,7 @@ const { t } = useI18n()
 const config = useAppConfig()
 
 const heroRef      = ref<HTMLElement | null>(null)
+const contentRef   = ref<HTMLElement | null>(null)
 const dateRef      = ref<HTMLElement | null>(null)
 const namesRef     = ref<HTMLElement | null>(null)
 const photoWrapRef = ref<HTMLElement | null>(null)
@@ -17,21 +18,21 @@ onMounted(() => {
 
   if (photoWrapRef.value && photoImgRef.value) {
     tl.fromTo(
-        photoWrapRef.value,
-        { clipPath: 'inset(0 0 100% 0)' },
-        { clipPath: 'inset(0 0 0% 0)', duration: 1.6, ease: 'expo.inOut' },
-        0.0,
+      photoWrapRef.value,
+      { clipPath: 'inset(0 0 100% 0)' },
+      { clipPath: 'inset(0 0 0% 0)', duration: 1.6, ease: 'expo.inOut' },
+      0.0,
     )
-        .from(photoImgRef.value, { scale: 1.1, duration: 2.6, ease: 'power2.out' }, 0.0)
+      .from(photoImgRef.value, { scale: 1.15, duration: 2.6, ease: 'power2.out' }, 0.0)
   }
 
   tl.from(dateRef.value,  { opacity: 0, x: -40, duration: 0.9 }, 0.5)
-      .from(namesRef.value, { opacity: 0, y: 30, duration: 1.1 }, 0.8)
-      .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.2)
+    .from(namesRef.value, { opacity: 0, y: 30,  duration: 1.1 }, 0.8)
+    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.2)
 
   if (photoImgRef.value) {
     $gsap.to(photoImgRef.value, {
-      yPercent: -10,
+      yPercent: -12,
       ease: 'none',
       scrollTrigger: {
         trigger: heroRef.value,
@@ -41,13 +42,26 @@ onMounted(() => {
       },
     })
   }
+
+  if (contentRef.value && window.innerWidth > 768) {
+    $gsap.to(contentRef.value, {
+      xPercent: -3,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroRef.value,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 2,
+      },
+    })
+  }
 })
 </script>
 
 <template>
   <section ref="heroRef" class="hero">
 
-    <div class="hero__content">
+    <div ref="contentRef" class="hero__content">
       <div ref="dateRef" class="hero__date">
         <span class="hero__num">{{ config.wedding.dateDay }}</span>
         <span class="hero__num">{{ config.wedding.dateMonth }}</span>
@@ -66,24 +80,26 @@ onMounted(() => {
 
     <div ref="photoWrapRef" class="hero__photo-wrap">
       <img
-          ref="photoImgRef"
-          :src="config.wedding.heroPhoto"
-          alt="Wedding Hero"
-          class="hero__photo"
+        ref="photoImgRef"
+        :src="config.wedding.heroPhoto"
+        alt="Wedding Hero"
+        class="hero__photo"
       />
       <div class="hero__overlay-dark"></div>
+    </div>
 
-      <div ref="namesRef" class="hero__names-overlay">
-        <span class="hero__name--white">{{ t('names.groom') }}</span>
-        <span class="hero__amp--white">&amp;</span>
-        <span class="hero__name--white">{{ t('names.bride') }}</span>
-      </div>
+    <!-- Имена вынесены наружу фото-панели — корректный z-index на мобиле -->
+    <div ref="namesRef" class="hero__names-overlay">
+      <span class="hero__name--white">{{ t('names.groom') }}</span>
+      <span class="hero__amp--white">&amp;</span>
+      <span class="hero__name--white">{{ t('names.bride') }}</span>
     </div>
 
   </section>
 </template>
 
 <style scoped>
+/* ─── Контейнер ─── */
 .hero {
   position: relative;
   min-height: 100svh;
@@ -92,66 +108,27 @@ onMounted(() => {
   overflow: hidden;
 }
 
+/* ─── Контент-панель — чуть темнее фона ─── */
 .hero__content {
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--space-8);
+  padding: var(--space-8) var(--space-6);
   gap: var(--space-8);
-}
-
-.hero__photo-wrap {
+  background-color: var(--color-surface); /* squirrel-100 vs bg squirrel-50 */
   position: relative;
-  width: 50%;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.hero__photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Слой для прозрачности (затемнения) */
-.hero__overlay-dark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.25); /* Легкое затемнение */
   z-index: 1;
+  will-change: transform;
 }
 
-.hero__names-overlay {
-  position: absolute;
-  top: var(--space-8);
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 2;
-  pointer-events: none;
+@media (min-width: 769px) {
+  .hero__content {
+    border-right: 1px solid var(--color-divider);
+  }
 }
 
-.hero__name--white {
-  font-family: var(--font-serif);
-  font-size: clamp(2.5rem, 5vw, 5rem);
-  font-style: italic;
-  color: #ffffff;
-  line-height: 0.9;
-}
-
-.hero__amp--white {
-  font-family: var(--font-serif);
-  font-size: 2.5rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin: var(--space-2) 0;
-}
-
+/* ─── Дата ─── */
 .hero__date {
   display: flex;
   flex-direction: column;
@@ -159,34 +136,160 @@ onMounted(() => {
 
 .hero__num {
   font-family: var(--font-serif);
-  font-size: clamp(4rem, 12vw, 8rem);
-  line-height: 0.8;
+  font-size: clamp(4rem, 10vw, 9rem);
+  line-height: 0.82;
+  letter-spacing: var(--tracking-tighter);
   color: var(--color-text-heading);
 }
 
+/* ─── CTA блок ─── */
+.hero__cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 .hero__description {
-  max-width: 400px;
-  font-size: var(--text-lg);
-  margin-bottom: var(--space-4);
+  max-width: 380px;
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
 }
 
 .hero__actions {
   display: flex;
-  flex-wrap: wrap; /* Кнопки будут переноситься на новую строку при нехватке места */
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
-/* Адаптив */
+/* ─── Фото-панель ─── */
+.hero__photo-wrap {
+  position: relative;
+  width: 50%;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.hero__photo {
+  width: 100%;
+  height: 110%; /* запас для parallax */
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: saturate(0.28) sepia(0.10) brightness(0.97);
+}
+
+/* ─── Затемнение фото ─── */
+.hero__overlay-dark {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    155deg,
+    rgba(14, 10, 7, 0.04) 0%,
+    rgba(14, 10, 7, 0.34) 100%
+  );
+  z-index: 1;
+}
+
+/* ─── Имена поверх фото ─── */
+.hero__names-overlay {
+  position: absolute;
+  top: var(--space-8);
+  left: 50%;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hero__name--white {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 5rem);
+  font-style: italic;
+  color: #ffffff;
+  line-height: 0.9;
+  text-shadow: 0 2px 24px rgba(14, 10, 7, 0.42);
+}
+
+.hero__amp--white {
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 1.8vw, 2rem);
+  color: rgba(255, 255, 255, 0.68);
+  margin-block: var(--space-1);
+  text-shadow: 0 1px 12px rgba(14, 10, 7, 0.30);
+}
+
+/* ──────────────── Мобиль ──────────────── */
 @media (max-width: 768px) {
-  .hero { flex-direction: column; }
-  .hero__content {
-    width: 100%;
-    padding: var(--space-4);
-    align-items: center;
-    text-align: center;
+  .hero {
+    flex-direction: column;
+    background-color: var(--squirrel-900);
   }
-  .hero__photo-wrap { width: 100%; height: 50vh; }
-  .hero__actions { justify-content: center; }
-  .hero__names-overlay { top: var(--space-4); }
+
+  /* Фото — полный экран под контентом */
+  .hero__photo-wrap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .hero__photo {
+    height: 100%;
+    object-position: center center;
+  }
+
+  /* Усиленный градиент для читаемости снизу */
+  .hero__overlay-dark {
+    background: linear-gradient(
+      180deg,
+      rgba(14, 10, 7, 0.16) 0%,
+      rgba(14, 10, 7, 0.02) 24%,
+      rgba(14, 10, 7, 0.50) 60%,
+      rgba(14, 10, 7, 0.90) 100%
+    );
+  }
+
+  /* Контент прижат к низу — поверх фото */
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    flex: 1;
+    min-height: 100svh;
+    background: transparent;
+    padding: var(--space-6) var(--space-4) var(--space-6);
+    justify-content: flex-end;
+    gap: var(--space-4);
+  }
+
+  /* Белый текст на тёмном фоне */
+  .hero__num {
+    color: rgba(255, 255, 255, 0.93);
+    font-size: clamp(3rem, 18vw, 5.5rem);
+    line-height: 0.85;
+  }
+
+  .hero__description {
+    color: rgba(255, 255, 255, 0.62);
+    max-width: 100%;
+    font-size: var(--text-sm);
+  }
+
+  /* Имена — полная ширина на мобиле */
+  .hero__names-overlay {
+    left: 0;
+    top: var(--space-6);
+  }
+
+  .hero__name--white {
+    font-size: clamp(1.8rem, 9vw, 3.2rem);
+  }
+
+  .hero__amp--white {
+    font-size: clamp(1rem, 4vw, 1.5rem);
+  }
 }
 </style>
