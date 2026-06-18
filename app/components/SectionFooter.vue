@@ -7,11 +7,12 @@ const { t } = useI18n()
     <div class="container footer__inner">
 
       <div class="footer__content">
+        <Botanical variant="branch" class="footer__branch" />
         <p class="footer__names">
-          {{ t('names.groom') }} &amp; {{ t('names.bride') }}
+          {{ t('names.groom') }}<span class="footer__amp">&amp;</span>{{ t('names.bride') }}
         </p>
         <p class="footer__date">{{ t('footer.closingDate') }}</p>
-        <WaxSeal :size="32" />
+        <WaxSeal :size="40" interactive />
         <UiLangSwitcher />
       </div>
 
@@ -36,6 +37,14 @@ const { t } = useI18n()
   padding-top: var(--space-6);
 }
 
+.footer__branch {
+  width: clamp(160px, 40vw, 240px);
+  height: auto;
+  color: var(--squirrel-400);
+  opacity: 0.55;
+  margin-bottom: var(--space-1);
+}
+
 .footer__names {
   font-family: var(--font-serif);
   font-weight: 300;
@@ -43,6 +52,14 @@ const { t } = useI18n()
   font-size: var(--text-2xl);
   letter-spacing: var(--tracking-tighter);
   color: var(--color-text-heading);
+}
+
+.footer__amp {
+  font-family: var(--font-script);
+  font-style: normal;
+  color: var(--color-accent);
+  margin-inline: 0.4em;
+  font-size: 1.1em;
 }
 
 .footer__date {

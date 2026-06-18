@@ -88,6 +88,7 @@ onMounted(() => {
         class="hero__photo"
       />
       <div class="hero__overlay-dark"></div>
+      <Botanical variant="spray" class="hero__botanical" />
     </div>
 
     <div ref="namesRef" class="hero__names-overlay">
@@ -185,6 +186,18 @@ onMounted(() => {
   z-index: 1;
 }
 
+.hero__botanical {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(140px, 22vw, 240px);
+  height: auto;
+  color: rgba(251, 251, 248, 0.7);
+  transform: scaleX(-1);
+  z-index: 2;
+  pointer-events: none;
+}
+
 .hero__names-overlay {
   position: absolute;
   top: var(--space-8);
@@ -207,9 +220,9 @@ onMounted(() => {
 }
 
 .hero__amp--white {
-  font-family: var(--font-serif);
-  font-size: clamp(1.2rem, 1.8vw, 2rem);
-  color: rgba(255, 255, 255, 0.68);
+  font-family: var(--font-script);
+  font-size: clamp(1.6rem, 2.4vw, 2.6rem);
+  color: rgba(255, 255, 255, 0.82);
   margin-block: var(--space-1);
   text-shadow: 0 1px 12px rgba(14, 10, 7, 0.30);
 }
@@ -294,6 +307,12 @@ onMounted(() => {
     color: rgba(255, 255, 255, 0.88);
     border-color: rgba(255, 255, 255, 0.45);
     background: transparent;
+  }
+
+  /* На мобиле фото — фон под текстом, ветка убрана чтобы не мешать именам */
+  .hero__botanical {
+    width: 130px;
+    color: rgba(251, 251, 248, 0.45);
   }
 
   /* Имена — полная ширина на мобиле */

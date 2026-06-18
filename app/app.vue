@@ -14,7 +14,9 @@ useHead({
       <SectionGreeting />
       <SectionCountdown />
       <SectionStages />
+      <SectionGallery />
       <SectionProgram />
+      <SectionLocation />
       <SectionRsvp />
     </main>
   </NuxtLayout>

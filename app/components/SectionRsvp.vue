@@ -75,6 +75,8 @@ onMounted(() => {
     <div class="container">
 
       <div class="rsvp__body">
+        <Botanical variant="spray" class="rsvp__corner rsvp__corner--tl" />
+        <Botanical variant="spray" class="rsvp__corner rsvp__corner--br" />
         <Transition name="fade" mode="out-in">
 
           <div v-if="isSuccess" class="rsvp__success" aria-live="polite">
@@ -191,15 +193,31 @@ onMounted(() => {
 .rsvp { background-color: var(--color-surface); }
 
 .rsvp__body {
+  position: relative;
   margin-inline: auto;
   margin-block: var(--space-4);
   border: 0.5px solid var(--color-divider);
   padding: var(--space-6) var(--space-4);
+  overflow: hidden;
 }
 
 @media (min-width: 480px) {
-  .rsvp__body { padding: var(--space-4); }
+  .rsvp__body { padding: var(--space-6); }
 }
+
+.rsvp__corner {
+  position: absolute;
+  width: clamp(90px, 18vw, 140px);
+  height: auto;
+  color: var(--squirrel-400);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+.rsvp__corner--tl { top: 0; left: 0; transform: scaleY(-1); }
+.rsvp__corner--br { bottom: 0; right: 0; transform: scaleX(-1); }
+
+.rsvp__body > :not(.rsvp__corner) { position: relative; z-index: 1; }
 
 .rsvp__header { text-align: center; margin-bottom: var(--space-4); }
 

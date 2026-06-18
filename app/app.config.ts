@@ -24,5 +24,14 @@ export default defineAppConfig({
       { key: 'proposal', year: '2025', photo: '/images/stages/3.webp' },
       { key: 'wedding',  year: '2026', photo: '/images/stages/4.webp' },
     ],
+
+    gallery: [
+      { src: '/images/gallery/1.webp', span: 'tall' },
+      { src: '/images/gallery/2.webp', span: 'wide' },
+      { src: '/images/gallery/3.webp', span: 'normal' },
+      { src: '/images/gallery/4.webp', span: 'normal' },
+      { src: '/images/gallery/5.webp', span: 'tall' },
+      { src: '/images/gallery/6.webp', span: 'wide' },
+    ],
   },
 })
