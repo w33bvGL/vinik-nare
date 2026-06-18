@@ -43,8 +43,11 @@ onMounted(() => {
     })
   }
 
+  // При скролле панель теряет цвет фона → scrub возвращает его при скролле вверх
   if (contentRef.value && window.innerWidth > 768) {
+    const bgTarget = getComputedStyle(document.body).backgroundColor
     $gsap.to(contentRef.value, {
+      backgroundColor: bgTarget,
       xPercent: -3,
       ease: 'none',
       scrollTrigger: {
@@ -260,22 +263,40 @@ onMounted(() => {
     flex: 1;
     min-height: 100svh;
     background: transparent;
-    padding: var(--space-6) var(--space-4) var(--space-6);
+    padding: var(--space-6) var(--space-4) max(var(--space-6), env(safe-area-inset-bottom, var(--space-6)));
     justify-content: flex-end;
-    gap: var(--space-4);
+    gap: var(--space-3);
   }
 
-  /* Белый текст на тёмном фоне */
+  /* Дата горизонтально — не занимает всю высоту */
+  .hero__date {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
   .hero__num {
     color: rgba(255, 255, 255, 0.93);
-    font-size: clamp(3rem, 18vw, 5.5rem);
-    line-height: 0.85;
+    font-size: clamp(2rem, 9vw, 3rem);
+    line-height: 1;
   }
 
   .hero__description {
-    color: rgba(255, 255, 255, 0.62);
+    color: rgba(255, 255, 255, 0.70);
     max-width: 100%;
     font-size: var(--text-sm);
+  }
+
+  /* Кнопки: инверт на тёмном фоне фото */
+  :deep(.btn--filled) {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: transparent;
+    color: var(--squirrel-900);
+  }
+  :deep(.btn--outline) {
+    color: rgba(255, 255, 255, 0.88);
+    border-color: rgba(255, 255, 255, 0.45);
+    background: transparent;
   }
 
   /* Имена — полная ширина на мобиле */

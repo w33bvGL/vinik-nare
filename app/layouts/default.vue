@@ -13,4 +13,11 @@
   border-right: 1px solid var(--color-divider);
   min-height: 100dvh;
 }
+
+@media (max-width: 768px) {
+  .page-rail {
+    border-left: none;
+    border-right: none;
+  }
+}
 </style>
