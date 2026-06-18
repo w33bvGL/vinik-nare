@@ -75,8 +75,8 @@ onMounted(() => {
     <div class="container">
 
       <div class="rsvp__body">
-        <Botanical variant="spray" class="rsvp__corner rsvp__corner--tl" />
-        <Botanical variant="spray" class="rsvp__corner rsvp__corner--br" />
+        <Botanical variant="spray" animate :scrub="1" class="rsvp__corner rsvp__corner--tl" />
+        <Botanical variant="spray" animate :scrub="1" :delay="0.15" class="rsvp__corner rsvp__corner--br" />
         <Transition name="fade" mode="out-in">
 
           <div v-if="isSuccess" class="rsvp__success" aria-live="polite">

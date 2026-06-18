@@ -7,7 +7,7 @@ const { t } = useI18n()
     <div class="container footer__inner">
 
       <div class="footer__content">
-        <Botanical variant="branch" class="footer__branch" />
+        <Botanical variant="branch" animate :scrub="0.8" class="footer__branch" />
         <p class="footer__names">
           {{ t('names.groom') }}<span class="footer__amp">&amp;</span>{{ t('names.bride') }}
         </p>

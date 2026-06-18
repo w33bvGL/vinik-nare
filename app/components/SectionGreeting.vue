@@ -23,8 +23,8 @@ onMounted(() => {
   <section ref="rootRef" class="section greeting" aria-labelledby="greeting-heading">
 
     <Botanical ref="roseRef" variant="rose" class="greeting__rose" />
-    <Botanical variant="spray" class="greeting__spray greeting__spray--tl" />
-    <Botanical variant="spray" class="greeting__spray greeting__spray--br" />
+    <Botanical variant="spray" animate :scrub="1.2" class="greeting__spray greeting__spray--tl" />
+    <Botanical variant="spray" animate :scrub="1.2" :delay="0.15" class="greeting__spray greeting__spray--br" />
 
     <div class="container greeting__inner">
 

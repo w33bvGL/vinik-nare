@@ -10,54 +10,64 @@ const photoWrapRef = ref<HTMLElement | null>(null)
 const photoImgRef  = ref<HTMLImageElement | null>(null)
 const ctaRef       = ref<HTMLElement | null>(null)
 
+let ctx: gsap.core.Context | null = null
+
 onMounted(() => {
   const { $gsap } = useNuxtApp() as any
   if (!$gsap) return
 
-  const tl = $gsap.timeline({ defaults: { ease: 'power3.out' } })
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  if (photoWrapRef.value && photoImgRef.value) {
-    tl.fromTo(
-      photoWrapRef.value,
-      { clipPath: 'inset(0 0 100% 0)' },
-      { clipPath: 'inset(0 0 0% 0)', duration: 1.1, ease: 'expo.out' },
-      0.0,
-    )
-      .from(photoImgRef.value, { scale: 1.12, duration: 2.2, ease: 'power2.out' }, 0.0)
-  }
+  ctx = $gsap.context(() => {
+    const tl = $gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-  tl.from(dateRef.value,  { opacity: 0, x: -40, duration: 0.9 }, 0.75)
-    .from(namesRef.value, { opacity: 0, y: 30,  duration: 1.0 }, 1.0)
-    .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.35)
+    if (photoWrapRef.value && photoImgRef.value) {
+      tl.fromTo(
+        photoWrapRef.value,
+        { clipPath: 'inset(0 0 100% 0)' },
+        { clipPath: 'inset(0 0 0% 0)', duration: 1.1, ease: 'expo.out' },
+        0.0,
+      )
+        .from(photoImgRef.value, { scale: 1.12, duration: 2.2, ease: 'power2.out' }, 0.0)
+    }
 
-  if (photoImgRef.value) {
-    $gsap.to(photoImgRef.value, {
-      yPercent: -12,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroRef.value,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1.2,
-      },
-    })
-  }
+    tl.from(dateRef.value,  { opacity: 0, x: -40, duration: 0.9 }, 0.75)
+      .from(namesRef.value, { opacity: 0, y: 30,  duration: 1.0 }, 1.0)
+      .from(ctaRef.value?.children ?? [], { opacity: 0, y: 18, duration: 0.7, stagger: 0.12 }, 1.35)
 
-  if (contentRef.value && window.innerWidth > 768) {
-    const bgTarget = getComputedStyle(document.body).backgroundColor
-    $gsap.to(contentRef.value, {
-      backgroundColor: bgTarget,
-      xPercent: -3,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroRef.value,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 2,
-      },
-    })
-  }
+    if (reduce) return
+
+    if (photoImgRef.value) {
+      $gsap.to(photoImgRef.value, {
+        yPercent: -12,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroRef.value,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2,
+        },
+      })
+    }
+
+    if (contentRef.value && window.innerWidth > 768) {
+      const bgTarget = getComputedStyle(document.body).backgroundColor
+      $gsap.to(contentRef.value, {
+        backgroundColor: bgTarget,
+        xPercent: -3,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroRef.value,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 2,
+        },
+      })
+    }
+  }, heroRef.value!)
 })
+
+onUnmounted(() => ctx?.revert())
 </script>
 
 <template>
@@ -88,7 +98,21 @@ onMounted(() => {
         class="hero__photo"
       />
       <div class="hero__overlay-dark"></div>
-      <Botanical variant="spray" class="hero__botanical" />
+
+      <div class="hero__foliage">
+        <Botanical
+          variant="spray" animate :delay="0.7" :scrub="1.4"
+          class="hero__branch hero__branch--tr"
+        />
+        <Botanical
+          variant="spray" animate :delay="0.95" :density="0.8" :scrub="1.1"
+          class="hero__branch hero__branch--tl"
+        />
+        <Botanical
+          variant="vine" animate :delay="1.15" :density="0.85" :scrub="0.8"
+          class="hero__branch hero__branch--trail"
+        />
+      </div>
     </div>
 
     <div ref="namesRef" class="hero__names-overlay">
@@ -186,16 +210,47 @@ onMounted(() => {
   z-index: 1;
 }
 
-.hero__botanical {
+/* Foliage layer — sits above the photo + overlay, below the names. */
+.hero__foliage {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: clamp(140px, 22vw, 240px);
-  height: auto;
-  color: rgba(251, 251, 248, 0.7);
-  transform: scaleX(-1);
+  inset: 0;
   z-index: 2;
   pointer-events: none;
+}
+
+.hero__branch {
+  position: absolute;
+  height: auto;
+  color: rgba(251, 251, 248, 0.72);
+  /* faint shadow lifts the pale line-work off the photo */
+  filter: drop-shadow(0 1px 6px rgba(14, 10, 7, 0.28));
+}
+
+/* Top-right corner: rotate 180° so the base sits in the corner and the
+   foliage drapes down-left into the frame. */
+.hero__branch--tr {
+  top: -1px;
+  right: -1px;
+  width: clamp(150px, 24vw, 250px);
+  transform: rotate(180deg);
+}
+
+/* Top-left accent: scaleY(-1) anchors the base in the corner, foliage
+   fanning down-right. Smaller + fainter so the corner reads as primary. */
+.hero__branch--tl {
+  top: -1px;
+  left: -1px;
+  width: clamp(110px, 17vw, 180px);
+  color: rgba(251, 251, 248, 0.55);
+  transform: scaleY(-1);
+}
+
+/* A vine trailing down the right edge for depth. */
+.hero__branch--trail {
+  top: 12%;
+  right: -2%;
+  width: clamp(90px, 14vw, 150px);
+  color: rgba(251, 251, 248, 0.5);
 }
 
 .hero__names-overlay {
@@ -309,11 +364,11 @@ onMounted(() => {
     background: transparent;
   }
 
-  /* На мобиле фото — фон под текстом, ветка убрана чтобы не мешать именам */
-  .hero__botanical {
-    width: 130px;
-    color: rgba(251, 251, 248, 0.45);
-  }
+  /* На мобиле фото — фон под текстом. Оставляем только верхние ветки,
+     помельче и потише, чтобы не спорить с именами; шлейф убираем. */
+  .hero__branch--tr { width: 120px; color: rgba(251, 251, 248, 0.5); }
+  .hero__branch--tl { width: 92px;  color: rgba(251, 251, 248, 0.4); }
+  .hero__branch--trail { display: none; }
 
   /* Имена — полная ширина на мобиле */
   .hero__names-overlay {
