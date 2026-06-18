@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     telegramChatId: '',
   },
 
-  modules: ['@nuxtjs/i18n'],
+  modules: ['@nuxtjs/i18n', 'nuxt-schema-org'],
 
   css: [
     '~/assets/css/tokens.css',
