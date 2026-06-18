@@ -10,7 +10,7 @@ onMounted(() => {
   const { $gsap } = useNuxtApp() as any
   if (!$gsap || !sectionRef.value) return
 
-  $gsap.from(sectionRef.value.querySelector('.program__label'), {
+  $gsap.from(sectionRef.value.querySelector('.section-label'), {
     opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
     scrollTrigger: { trigger: sectionRef.value, start: 'top 80%', once: true },
   })
@@ -64,9 +64,9 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 <template>
   <section id="program" ref="sectionRef" class="section program" aria-labelledby="program-heading">
     <div class="container">
-      <p id="program-heading" class="program__label">
+      <UiSectionLabel id="program-heading">
         {{ t('program.label') }}
-      </p>
+      </UiSectionLabel>
     </div>
 
     <div class="program__list">
@@ -110,16 +110,6 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 </template>
 
 <style scoped>
-.program__label {
-  font-family: var(--font-sc);
-  font-size: var(--text-xl);
-  font-weight: 300;
-  letter-spacing: var(--tracking-widest);
-  color: var(--color-text-secondary);
-  text-align: center;
-  margin-bottom: var(--space-8);
-}
-
 /* ── Cards list ── */
 .program__list {
   display: flex;

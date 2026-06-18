@@ -20,7 +20,7 @@ onMounted(() => {
   const { $gsap, $ScrollTrigger } = useNuxtApp() as any
   if (!$gsap) return
 
-  $gsap.from(sectionRef.value?.querySelector('.stages__label'), {
+  $gsap.from(sectionRef.value?.querySelector('.section-label'), {
     opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
     scrollTrigger: { trigger: sectionRef.value, start: 'top 80%', once: true },
   })
@@ -126,9 +126,9 @@ function setPhoto(el: HTMLElement | null, i: number) {
   <section ref="sectionRef" class="section stages" aria-labelledby="stages-heading">
     <div class="container">
 
-      <h2 id="stages-heading" class="stages__label">
+      <UiSectionLabel id="stages-heading">
         {{ t('stages.label') }}
-      </h2>
+      </UiSectionLabel>
 
       <div class="stages__map" aria-hidden="true">
         <div ref="mapLineRef" class="stages__map-line" />
@@ -183,16 +183,6 @@ function setPhoto(el: HTMLElement | null, i: number) {
 
 <style scoped>
 .stages { background-color: var(--color-surface); }
-
-.stages__label {
-  font-family: var(--font-sc);
-  font-size: var(--text-xl);
-  font-weight: 300;
-  letter-spacing: var(--tracking-widest);
-  color: var(--color-text-secondary);
-  text-align: center;
-  margin-bottom: var(--space-8);
-}
 
 .stages__map {
   position: relative;

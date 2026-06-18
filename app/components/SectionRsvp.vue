@@ -87,9 +87,9 @@ onMounted(() => {
           <form v-else class="rsvp__form" novalidate @submit.prevent="submit">
 
             <div class="rsvp__header" data-gsap>
-              <p id="rsvp-heading" class="rsvp__label">
+              <UiSectionLabel id="rsvp-heading">
                 {{ t('rsvp.label') }}
-              </p>
+              </UiSectionLabel>
               <span class="rsvp__ornament" aria-hidden="true" />
               <p class="rsvp__meta">
                 {{ t('rsvp.meta', { deadline: t('date.rsvpDeadline') }) }}
@@ -220,14 +220,7 @@ onMounted(() => {
 
 .rsvp__header { text-align: center; margin-bottom: var(--space-4); }
 
-.rsvp__label {
-  font-family: var(--font-sc);
-  font-size: var(--text-xl);
-  font-weight: 300;
-  letter-spacing: var(--tracking-widest);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-2);
-}
+.rsvp__header :deep(.section-label) { margin-bottom: var(--space-2); }
 
 .rsvp__ornament {
   display: block;
