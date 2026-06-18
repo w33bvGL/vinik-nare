@@ -19,8 +19,6 @@ const units = computed(() => [
   <section ref="rootRef" class="section countdown" aria-labelledby="countdown-heading">
     <div class="container">
 
-      <UiDivider variant="full" />
-
       <div class="countdown__body">
         <p id="countdown-heading" data-gsap class="countdown__date">
           {{ t('date.formatted') }}
@@ -49,19 +47,19 @@ const units = computed(() => [
         <p v-else data-gsap class="countdown__past">{{ t('countdown.past') }}</p>
       </div>
 
-      <UiDivider variant="full" />
-
     </div>
   </section>
 </template>
 
 <style scoped>
+.countdown { padding-block: var(--space-4); }
+
 .countdown__body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
-  padding-block: var(--space-8);
+  gap: var(--space-3);
+  padding-block: var(--space-4);
   text-align: center;
 }
 

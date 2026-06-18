@@ -9,6 +9,9 @@ onMounted(() => revealGroup(rootRef, '[data-gsap]', { stagger: 0.12 }))
 
 <template>
   <section ref="rootRef" class="section greeting" aria-labelledby="greeting-heading">
+
+    <span class="greeting__deco" aria-hidden="true">&amp;</span>
+
     <div class="container greeting__inner">
 
       <UiTag data-gsap :label="t('greeting.label')" />
@@ -30,7 +33,31 @@ onMounted(() => revealGroup(rootRef, '[data-gsap]', { stagger: 0.12 }))
 </template>
 
 <style scoped>
+.greeting {
+  background-color: var(--color-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Большой скриптовый символ — декоративный водяной знак */
+.greeting__deco {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-script);
+  font-size: clamp(14rem, 45vw, 26rem);
+  color: var(--squirrel-300);
+  opacity: 0.28;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
 .greeting__inner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;

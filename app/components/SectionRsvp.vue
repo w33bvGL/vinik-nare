@@ -74,7 +74,7 @@ onMounted(() => {
   <section id="rsvp" ref="rootRef" class="section rsvp" aria-labelledby="rsvp-heading">
     <div class="container">
 
-      <UiDivider variant="full" />
+      <UiDivider variant="ornament" />
 
       <div class="rsvp__body">
         <Transition name="fade" mode="out-in">
@@ -187,13 +187,15 @@ onMounted(() => {
         </Transition>
       </div>
 
-      <UiDivider variant="full" />
+      <UiDivider variant="ornament" />
 
     </div>
   </section>
 </template>
 
 <style scoped>
+.rsvp { background-color: var(--color-surface); }
+
 .rsvp__body {
   margin-inline: auto;
   margin-block: var(--space-8);

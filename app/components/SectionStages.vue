@@ -182,7 +182,8 @@ function setPhoto(el: HTMLElement | null, i: number) {
 </template>
 
 <style scoped>
-/* ── Section label ── */
+.stages { background-color: var(--color-surface); }
+
 .stages__label {
   font-family: var(--font-sc);
   font-size: var(--text-xl);
@@ -193,7 +194,6 @@ function setPhoto(el: HTMLElement | null, i: number) {
   margin-bottom: var(--space-8);
 }
 
-/* ── Map (overview strip) ── */
 .stages__map {
   position: relative;
   display: flex;
