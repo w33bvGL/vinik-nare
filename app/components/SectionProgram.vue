@@ -55,7 +55,7 @@ onMounted(() => {
       }, 0.35)
 
       tl.from(
-        card.querySelectorAll('.program__title, .program__desc, .program__venue, .program__map-hint'),
+        card.querySelectorAll('.program__title, .program__desc, .program__venue'),
         { opacity: 0, y: 10, stagger: 0.08, duration: 0.5, ease: 'power2.out' },
         0.4,
       )
@@ -125,9 +125,6 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
           <p class="program__title">{{ item.title }}</p>
           <p class="program__desc">{{ item.desc }}</p>
           <p class="program__venue">{{ item.venue }}</p>
-          <span v-if="item.mapsUrl" class="program__map-hint">
-            {{ t('program.mapLink') }} ↗
-          </span>
         </div>
       </a>
     </div>
@@ -155,15 +152,15 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 .program__card:hover { background: var(--color-surface); }
 
 @media (min-width: 560px) {
-  /* Fixed fractional tracks pin the photo/text split to the same ratio on every
-     card, immune to image size or text length; flip just mirrors the tracks. */
+  /* The photo is a fixed 400px-tall track (min 400px wide), so it dictates the
+     row height — a title wrapping to a second line no longer changes the card
+     size, and both cards stay identical regardless of image or text length. */
   .program__card {
-    grid-template-columns: 1.38fr 1fr; /* ≈ 58% / 42% */
-    min-height: 400px;
+    grid-template-columns: minmax(400px, 1.38fr) 1fr;
   }
 
   .program__card--flip {
-    grid-template-columns: 1fr 1.38fr;
+    grid-template-columns: 1fr minmax(400px, 1.38fr);
   }
   .program__card--flip .program__photo-wrap { grid-column: 2; grid-row: 1; }
   .program__card--flip .program__content    { grid-column: 1; grid-row: 1; }
@@ -180,7 +177,7 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 }
 
 @media (min-width: 560px) {
-  .program__photo-wrap { min-height: unset; }
+  .program__photo-wrap { min-height: unset; height: 400px; }
 }
 
 /* Dedicated layer for the GSAP zoom/parallax, kept separate from the <img> so
@@ -261,16 +258,6 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
   letter-spacing: var(--tracking-widest);
   color: var(--color-text-secondary);
   text-transform: uppercase;
-  margin-top: var(--space-2);
-}
-
-.program__map-hint {
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
-  color: var(--color-accent);
   margin-top: var(--space-2);
 }
 </style>
