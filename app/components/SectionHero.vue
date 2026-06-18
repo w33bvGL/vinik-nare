@@ -329,8 +329,8 @@ onUnmounted(() => ctx?.revert())
     background: transparent;
   }
 
-  .hero__branch {
-    width: clamp(150px, 46vw, 240px);
+  .hero__foliage {
+    display: none;
   }
 
   .hero__names-overlay {
@@ -339,11 +339,11 @@ onUnmounted(() => ctx?.revert())
   }
 
   .hero__name--white {
-    font-size: clamp(2.4rem, 12vw, 4rem);
+    font-size: clamp(3.4rem, 17vw, 6rem);
   }
 
   .hero__amp--white {
-    font-size: clamp(1.3rem, 5.5vw, 2rem);
+    font-size: clamp(1.8rem, 7vw, 2.8rem);
   }
 }
 </style>

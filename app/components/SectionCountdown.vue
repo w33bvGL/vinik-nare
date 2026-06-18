@@ -83,7 +83,7 @@ const units = computed(() => [
 
 .countdown__grid {
   display: flex;
-  gap: var(--space-6);
+  gap: clamp(var(--space-3), 5vw, var(--space-6));
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -93,13 +93,13 @@ const units = computed(() => [
   flex-direction: column;
   align-items: center;
   gap: var(--space-1);
-  min-width: 56px;
+  min-width: 48px;
 }
 
 .countdown__num {
   font-family: var(--font-serif);
   font-weight: 300;
-  font-size: clamp(var(--text-3xl), 8vw, var(--text-4xl));
+  font-size: clamp(var(--text-2xl), 6vw, var(--text-3xl));
   line-height: 1;
   color: var(--color-text-heading);
   font-variant-numeric: tabular-nums lining-nums;

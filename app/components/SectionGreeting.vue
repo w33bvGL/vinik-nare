@@ -23,8 +23,6 @@ onMounted(() => {
   <section ref="rootRef" class="section greeting" aria-labelledby="greeting-heading">
 
     <Botanical ref="roseRef" variant="rose" class="greeting__rose" />
-    <Botanical variant="spray" animate :scrub="1.2" class="greeting__spray greeting__spray--tl" />
-    <Botanical variant="spray" animate :scrub="1.2" :delay="0.15" class="greeting__spray greeting__spray--br" />
 
     <div class="container greeting__inner">
 
@@ -64,21 +62,6 @@ onMounted(() => {
   color: var(--squirrel-300);
   opacity: 0.5;
   pointer-events: none;
-}
-
-.greeting__spray {
-  position: absolute;
-  width: clamp(120px, 24vw, 220px);
-  height: auto;
-  color: var(--squirrel-400);
-  opacity: 0.45;
-  pointer-events: none;
-}
-.greeting__spray--tl { top: 0; left: 0; transform: scaleY(-1); }
-.greeting__spray--br { bottom: 0; right: 0; transform: scaleX(-1); }
-
-@media (max-width: 560px) {
-  .greeting__spray { width: 110px; opacity: 0.35; }
 }
 
 .greeting__inner {
