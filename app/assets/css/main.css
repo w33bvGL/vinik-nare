@@ -51,7 +51,7 @@ body {
 .section { padding-block: var(--space-8); }
 
 @media (min-width: 768px) {
-  .section { padding-block: var(--space-12); }
+  .section { padding-block: var(--space-6); }
 }
 
 .photo {
@@ -67,9 +67,10 @@ body::before {
   height: 100%;
   z-index: 9999;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity: 0.042;
-  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23g)'/></svg>");
+  background-size: 200px 200px;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
 }
 
 @media (prefers-reduced-motion: reduce) {

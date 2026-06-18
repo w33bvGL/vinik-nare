@@ -6,8 +6,6 @@ const { t } = useI18n()
   <footer class="footer" role="contentinfo">
     <div class="container footer__inner">
 
-      <UiDivider variant="ornament" />
-
       <div class="footer__content">
         <p class="footer__names">
           {{ t('names.groom') }} &amp; {{ t('names.bride') }}

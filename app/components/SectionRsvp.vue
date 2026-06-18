@@ -74,19 +74,15 @@ onMounted(() => {
   <section id="rsvp" ref="rootRef" class="section rsvp" aria-labelledby="rsvp-heading">
     <div class="container">
 
-      <UiDivider variant="ornament" />
-
       <div class="rsvp__body">
         <Transition name="fade" mode="out-in">
 
-          <!-- Success -->
           <div v-if="isSuccess" class="rsvp__success" aria-live="polite">
             <WaxSeal :size="64" class="rsvp__seal" />
             <p class="rsvp__success-heading">{{ t('rsvp.successHeading') }}</p>
             <p class="rsvp__success-text">{{ t('rsvp.successText') }}</p>
           </div>
 
-          <!-- Form -->
           <form v-else class="rsvp__form" novalidate @submit.prevent="submit">
 
             <div class="rsvp__header" data-gsap>
@@ -187,8 +183,6 @@ onMounted(() => {
         </Transition>
       </div>
 
-      <UiDivider variant="ornament" />
-
     </div>
   </section>
 </template>
@@ -198,17 +192,16 @@ onMounted(() => {
 
 .rsvp__body {
   margin-inline: auto;
-  margin-block: var(--space-8);
+  margin-block: var(--space-4);
   border: 0.5px solid var(--color-divider);
   padding: var(--space-6) var(--space-4);
 }
 
 @media (min-width: 480px) {
-  .rsvp__body { padding: var(--space-6); }
+  .rsvp__body { padding: var(--space-4); }
 }
 
-/* Header block */
-.rsvp__header { text-align: center; margin-bottom: var(--space-6); }
+.rsvp__header { text-align: center; margin-bottom: var(--space-4); }
 
 .rsvp__label {
   font-family: var(--font-sc);
@@ -255,7 +248,6 @@ onMounted(() => {
 }
 .rsvp__actions :deep(.btn) { flex: 1; }
 
-/* Success */
 .rsvp__success {
   display: flex;
   flex-direction: column;
@@ -288,7 +280,6 @@ onMounted(() => {
   letter-spacing: var(--tracking-wide);
 }
 
-/* Transitions */
 .fade-enter-active, .fade-leave-active { transition: opacity var(--dur-slow) var(--ease-gentle); }
 .fade-enter-from, .fade-leave-to       { opacity: 0; }
 
