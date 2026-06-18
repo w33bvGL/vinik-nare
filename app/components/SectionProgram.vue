@@ -6,56 +6,80 @@ const sectionRef = ref<HTMLElement | null>(null)
 const cardRefs   = ref<HTMLElement[]>([])
 const photoRefs  = ref<HTMLElement[]>([])
 
+let mm: gsap.MatchMedia | null = null
+
 onMounted(() => {
   const { $gsap } = useNuxtApp() as any
   if (!$gsap || !sectionRef.value) return
 
-  $gsap.from(sectionRef.value.querySelector('.section-label'), {
-    opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
-    scrollTrigger: { trigger: sectionRef.value, start: 'top 80%', once: true },
-  })
+  // matchMedia keeps every tween + ScrollTrigger scoped, so reduced-motion users
+  // get the static layout and mm.revert() cleans everything up on unmount.
+  mm = $gsap.matchMedia()
 
-  cardRefs.value.forEach((card, i) => {
-    const tl = $gsap.timeline({
-      scrollTrigger: { trigger: card, start: 'top 78%', once: true },
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    const section = sectionRef.value!
+
+    $gsap.from(section.querySelector('.section-label'), {
+      opacity: 0, y: 24, duration: 0.8, ease: 'power3.out',
+      scrollTrigger: { trigger: section, start: 'top 80%', once: true },
     })
 
-    tl.from(card, { opacity: 0, y: 48, duration: 0.9, ease: 'power3.out' }, 0)
+    cardRefs.value.forEach((card, i) => {
+      const photo = photoRefs.value[i]
 
-    const photo = photoRefs.value[i]
-    if (photo) {
-      tl.from(photo, { scale: 1.08, duration: 1.2, ease: 'power2.out' }, 0)
-    }
+      // The photo rests slightly zoomed so the scrub parallax never exposes the
+      // frame edges; the intro settles it in from a deeper zoom + vertical wipe.
+      if (photo) $gsap.set(photo, { scale: 1.18, transformOrigin: 'center center' })
 
-    tl.from(card.querySelector('.program__time'), {
-      opacity: 0, y: -20, duration: 0.6, ease: 'power3.out',
-    }, 0.2)
+      const tl = $gsap.timeline({
+        defaults: { ease: 'power3.out' },
+        scrollTrigger: { trigger: card, start: 'top 78%', once: true },
+      })
 
-    tl.from(card.querySelector('.program__rule'), {
-      scaleX: 0, duration: 0.4, ease: 'power2.inOut', transformOrigin: 'left',
-    }, 0.35)
+      tl.from(card, { opacity: 0, y: 48, duration: 0.9 }, 0)
 
-    tl.from(
-      card.querySelectorAll('.program__title, .program__desc, .program__venue, .program__map-hint'),
-      { opacity: 0, y: 10, stagger: 0.08, duration: 0.5, ease: 'power2.out' },
-      0.4,
-    )
-  })
+      if (photo) {
+        tl.from(photo, {
+          scale: 1.34,
+          clipPath: 'inset(0% 0% 100% 0%)',
+          duration: 1.2, ease: 'power2.out',
+        }, 0)
+      }
 
-  // Photo parallax
-  photoRefs.value.forEach((photo, i) => {
-    $gsap.fromTo(photo,
-      { y: -20 },
-      {
-        y: 20, ease: 'none',
-        scrollTrigger: {
-          trigger: cardRefs.value[i],
-          start: 'top bottom', end: 'bottom top', scrub: true,
+      tl.from(card.querySelector('.program__time'), {
+        opacity: 0, y: -20, duration: 0.6,
+      }, 0.2)
+
+      tl.from(card.querySelector('.program__rule'), {
+        scaleX: 0, duration: 0.4, ease: 'power2.inOut', transformOrigin: 'left',
+      }, 0.35)
+
+      tl.from(
+        card.querySelectorAll('.program__title, .program__desc, .program__venue, .program__map-hint'),
+        { opacity: 0, y: 10, stagger: 0.08, duration: 0.5, ease: 'power2.out' },
+        0.4,
+      )
+    })
+
+    // Gap-safe parallax: scale 1.18 leaves 9% of slack each side, so a ±6% drift
+    // stays covered. scrub ties it straight to Lenis' smooth-scroll position.
+    photoRefs.value.forEach((photo, i) => {
+      $gsap.fromTo(photo,
+        { yPercent: -6 },
+        {
+          yPercent: 6, ease: 'none',
+          scrollTrigger: {
+            trigger: cardRefs.value[i],
+            start: 'top bottom', end: 'bottom top',
+            scrub: true, invalidateOnRefresh: true,
+          },
         },
-      },
-    )
+      )
+    })
   })
 })
+
+onUnmounted(() => mm?.revert())
 
 function setCard(el: HTMLElement | null, i: number)  { if (el) cardRefs.value[i]  = el }
 function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i] = el }
@@ -82,16 +106,17 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
         :aria-label="`${item.title} — ${item.venue}`"
       >
         <div class="program__photo-wrap">
-          <img
-            v-if="item.photo"
-            :ref="(el) => setPhoto(el as HTMLElement, i)"
-            :src="item.photo"
-            :alt="item.title"
-            class="program__photo photo"
-            loading="lazy"
-            decoding="async"
-          />
-          <div v-else :ref="(el) => setPhoto(el as HTMLElement, i)" class="program__photo-ph" />
+          <div :ref="(el) => setPhoto(el as HTMLElement, i)" class="program__photo-inner">
+            <img
+              v-if="item.photo"
+              :src="item.photo"
+              :alt="item.title"
+              class="program__photo photo"
+              loading="lazy"
+              decoding="async"
+            />
+            <div v-else class="program__photo-ph" />
+          </div>
         </div>
 
         <div class="program__content">
@@ -143,6 +168,9 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 /* ── Photo ── */
 .program__photo-wrap {
   flex: 0 0 58%;
+  /* min-width:0 stops a wide <img> from inflating its flex basis past 58% —
+     that mismatch is what made cards with different photos look uneven. */
+  min-width: 0;
   overflow: hidden;
   background: var(--color-surface);
   min-height: 280px;
@@ -150,6 +178,13 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 
 @media (min-width: 560px) {
   .program__photo-wrap { min-height: unset; }
+}
+
+/* Dedicated layer for the GSAP zoom/parallax, kept separate from the <img> so
+   the CSS hover zoom and the scroll transform never fight over `transform`. */
+.program__photo-inner {
+  width: 100%;
+  height: 100%;
 }
 
 .program__photo,
@@ -165,6 +200,7 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 /* ── Content ── */
 .program__content {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -183,7 +219,7 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 .program__time {
   font-family: var(--font-serif);
   font-weight: 300;
-  font-size: clamp(var(--text-3xl), 6vw, var(--text-4xl));
+  font-size: clamp(var(--text-2xl), 4.2vw, var(--text-3xl));
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--color-text-heading);
   line-height: 1;
