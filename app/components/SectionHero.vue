@@ -91,7 +91,6 @@ onMounted(() => {
       <div class="hero__overlay-dark"></div>
     </div>
 
-    <!-- Имена вынесены наружу фото-панели — корректный z-index на мобиле -->
     <div ref="namesRef" class="hero__names-overlay">
       <span class="hero__name--white">{{ t('names.groom') }}</span>
       <span class="hero__amp--white">&amp;</span>
@@ -102,7 +101,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* ─── Контейнер ─── */
 .hero {
   position: relative;
   min-height: 100svh;
@@ -111,7 +109,6 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* ─── Контент-панель — чуть темнее фона ─── */
 .hero__content {
   width: 50%;
   display: flex;
@@ -119,7 +116,7 @@ onMounted(() => {
   justify-content: center;
   padding: var(--space-8) var(--space-6);
   gap: var(--space-8);
-  background-color: var(--color-surface); /* squirrel-100 vs bg squirrel-50 */
+  background-color: var(--color-surface);
   position: relative;
   z-index: 1;
   will-change: transform;
@@ -131,7 +128,6 @@ onMounted(() => {
   }
 }
 
-/* ─── Дата ─── */
 .hero__date {
   display: flex;
   flex-direction: column;
@@ -145,7 +141,6 @@ onMounted(() => {
   color: var(--color-text-heading);
 }
 
-/* ─── CTA блок ─── */
 .hero__cta {
   display: flex;
   flex-direction: column;
@@ -164,7 +159,6 @@ onMounted(() => {
   gap: var(--space-2);
 }
 
-/* ─── Фото-панель ─── */
 .hero__photo-wrap {
   position: relative;
   width: 50%;
@@ -174,26 +168,24 @@ onMounted(() => {
 
 .hero__photo {
   width: 100%;
-  height: 130%; /* запас для parallax: 12% × 130% = 15.6% движения, дно не обнажается */
+  height: 115%;
   object-fit: cover;
   object-position: center 20%;
   display: block;
   filter: saturate(0.28) sepia(0.10) brightness(0.97);
 }
 
-/* ─── Затемнение фото ─── */
 .hero__overlay-dark {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     155deg,
     rgba(14, 10, 7, 0.04) 0%,
-    rgba(14, 10, 7, 0.34) 100%
+    rgba(14, 10, 7, 0.4) 100%
   );
   z-index: 1;
 }
 
-/* ─── Имена поверх фото ─── */
 .hero__names-overlay {
   position: absolute;
   top: var(--space-8);
