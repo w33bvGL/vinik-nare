@@ -144,8 +144,8 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 
 /* ── Card ── */
 .program__card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr; /* mobile: photo stacked over content */
   text-decoration: none;
   color: inherit;
   cursor: pointer;
@@ -155,21 +155,24 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 .program__card:hover { background: var(--color-surface); }
 
 @media (min-width: 560px) {
+  /* Fixed fractional tracks pin the photo/text split to the same ratio on every
+     card, immune to image size or text length; flip just mirrors the tracks. */
   .program__card {
-    flex-direction: row;
+    grid-template-columns: 1.38fr 1fr; /* ≈ 58% / 42% */
     min-height: 400px;
   }
 
   .program__card--flip {
-    flex-direction: row-reverse;
+    grid-template-columns: 1fr 1.38fr;
   }
+  .program__card--flip .program__photo-wrap { grid-column: 2; grid-row: 1; }
+  .program__card--flip .program__content    { grid-column: 1; grid-row: 1; }
 }
 
 /* ── Photo ── */
 .program__photo-wrap {
-  flex: 0 0 58%;
-  /* min-width:0 stops a wide <img> from inflating its flex basis past 58% —
-     that mismatch is what made cards with different photos look uneven. */
+  /* min-width:0 stops a wide <img> from blowing its grid track past the track
+     size — that overflow is what made the split drift between cards. */
   min-width: 0;
   overflow: hidden;
   background: var(--color-surface);
@@ -199,7 +202,6 @@ function setPhoto(el: HTMLElement | null, i: number) { if (el) photoRefs.value[i
 
 /* ── Content ── */
 .program__content {
-  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
